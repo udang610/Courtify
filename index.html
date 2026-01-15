@@ -1,0 +1,4772 @@
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Courtify - Premium Sports Court Booking</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #0a2463;
+                --secondary: #247ba0;
+                --accent: #ff7f11;
+                --success: #2ecc71;
+                --danger: #e74c3c;
+                --light: #f8f9fa;
+                --dark: #121212;
+                --gradient: linear-gradient(135deg, #0a2463 0%, #247ba0 100%);
+                --card-bg: rgba(255, 255, 255, 0.05);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+                color: var(--light);
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+            ::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--accent);
+                border-radius: 5px;
+            }
+
+        
+            .navbar {
+                background: rgba(10, 36, 99, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                transition: var(--transition);
+                position: fixed;
+                z-index: 1030;
+                position: absolute; /* Membuat logo "melayang" */
+                left: 0;
+                right: 0;
+                top: 0;
+            }
+
+            .navbar .container {
+                padding-left: 100px;
+                padding-right: 0px;
+                max-width: 100%; /* Opsional: agar container selebar layar */
+                margin: 0 20px;  /* Memberi sedikit jarak aman dari ujung layar */
+            }
+
+            .navbar-brand {
+                position: relative;
+                padding: 0;
+            }
+
+            .navbar-brand img {
+                height: 100px; /* Ukuran yang ideal untuk logo navbar */
+                width: auto; 
+                object-fit: contain;
+                transition: all 0.3s ease;
+                transform: scale(1.5);
+            }
+
+
+            .nav-link {
+                font-weight: 500;
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem !important;
+                border-radius: 25px;
+                transition: var(--transition);
+            }
+
+            .nav-link:hover, .nav-link.active {
+                background: rgba(255, 127, 17, 0.1);
+                color: var(--accent) !important;
+                transform: translateY(-2px);
+            }
+
+            /* Hero Section */
+            .hero {
+                min-height: 90vh;
+                display: flex;
+                align-items: center;
+                background: linear-gradient(rgba(10, 36, 99, 0.9), rgba(18, 18, 18, 0.9)),
+                            url("img/LandingPage.jpg");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at 20% 50%, rgba(255, 127, 17, 0.1) 0%, transparent 50%);
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                padding: 4rem 0;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+                background: linear-gradient(45deg, #fff, var(--accent));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: fadeInUp 1s ease;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+                opacity: 0.9;
+                margin-bottom: 2.5rem;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+                animation: fadeInUp 1s ease 0.2s both;
+            }
+
+            /* Card Styling */
+            .card {
+                background: var(--card-bg);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--card-border);
+                border-radius: 20px;
+                overflow: hidden;
+                transition: var(--transition);
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                height: 100%; /* Tambahkan ini */
+                min-height: 550px; /* Atur tinggi minimum */
+            }
+
+            .card:hover {
+                transform: translateY(-15px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                border-color: var(--accent);
+            }
+
+            .card-img-top {
+                height: 200px;
+                object-fit: cover;
+                transition: var(--transition);
+            }
+
+            .card:hover .card-img-top {
+                transform: scale(1.1);
+            }
+
+            .card-body {
+                padding: 1.5rem;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .card-text {
+                color: rgba(255, 255, 255, 0.8) !important;
+                line-height: 1.6;
+                flex: 1; /* Membuat text area expandable */
+                margin-bottom: 1rem;
+            }
+
+            .card-title {
+                font-weight: 600;
+                color: var(--accent);
+                margin-bottom: 0.5rem;
+            }
+
+            .card-price {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--success);
+                margin-bottom: 1rem;
+            }
+
+            .card .btn {
+                margin-top: auto; /* Dorong tombol ke bawah */
+            }
+
+            .card-features {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 1rem;
+            }
+
+            .feature-badge {
+                background: rgba(255, 127, 17, 0.1);
+                color: var(--accent);
+                padding: 5px 10px;
+                border-radius: 15px;
+                font-size: 0.8rem;
+                border: 1px solid rgba(255, 127, 17, 0.3);
+            }
+
+            /* Form Styling */
+            .form-container {
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--card-border);
+                border-radius: 25px;
+                padding: 2.5rem;
+                box-shadow: var(--shadow);
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .form-label {
+                font-weight: 600 !important;
+                color: #ff9e00 !important; /* Orange yang lebih cerah */
+                margin-bottom: 0.5rem;
+                display: block;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                font-size: 0.95rem;
+                letter-spacing: 0.3px;
+            }
+
+            .form-control {
+                background: rgba(255, 255, 255, 0.12) !important;
+                border: 2px solid rgba(255, 255, 255, 0.25) !important;
+                color: #ffffff !important; /* Putih solid */
+                padding: 14px 18px !important;
+                border-radius: 12px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: 500 !important;
+                font-size: 1rem !important;
+                backdrop-filter: blur(10px);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-control:focus {
+                background: rgba(255, 255, 255, 0.18) !important;
+                border-color: #ff9e00 !important;
+                box-shadow: 0 0 0 3px rgba(255, 158, 0, 0.25), 
+                            inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                color: #ffffff !important;
+                transform: translateY(-2px);
+            }
+
+            /* PERBAIKAN UTAMA: Placeholder lebih terang */
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.7) !important; /* Lebih terang */
+                font-weight: 400;
+                opacity: 1 !important; /* Pastikan tidak transparan */
+                font-size: 0.95rem;
+            }
+
+            /* Select dropdown styling */
+            select.form-control {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ff9e00' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 18px center;
+                background-size: 16px;
+                padding-right: 45px;
+            }
+
+            /* Textarea khusus */
+            textarea.form-control {
+                min-height: 120px;
+                resize: vertical;
+                line-height: 1.5;
+            }
+
+            /* Untuk input date yang putih di Chrome */
+            input[type="date"] {
+                color-scheme: dark;
+            }
+
+            /* Pastikan option dropdown terlihat */
+            select.form-control option {
+                background: #0a2463 !important;
+                color: white !important;
+                padding: 10px;
+            }
+
+            /* Invalid state */
+            .form-control:invalid {
+                border-color: #ff4757 !important;
+            }
+
+            /* Valid state */
+            .form-control:valid {
+                border-color: #2ed573 !important;
+            }
+
+            /* Form container improvement */
+            .form-container {
+                background: rgba(10, 36, 99, 0.8) !important;
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 158, 0, 0.3) !important;
+                border-radius: 25px;
+                padding: 2.5rem;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            /* Form group spacing */
+            .mb-4 {
+                margin-bottom: 1.5rem !important;
+            }
+
+            /* ======= PERBAIKAN SPESIFIK UNTUK SETIAP INPUT ======= */
+
+            /* Nama Lengkap */
+            #nama {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* WhatsApp */
+            #wa {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Email */
+            #email {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Tanggal */
+            #tanggal {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Pesan */
+            #pesan {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Select dropdown */
+            #lapangan, #durasi {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* ======= PERBAIKAN UNTUK MOBILE ======= */
+            @media (max-width: 768px) {
+                .form-container {
+                    padding: 1.5rem;
+                    margin: 0 1rem;
+                }
+
+                .navbar-brand img {
+                    height: 35px;
+                }
+                
+                .form-control {
+                    padding: 16px !important;
+                    font-size: 16px !important; /* Mencegah zoom di iOS */
+                }
+                
+                .form-control::placeholder {
+                    font-size: 14px;
+                }
+            }
+
+            /* ======= PERBAIKAN INVALID FEEDBACK ======= */
+            .invalid-feedback {
+                color: #ff6b6b !important;
+                font-size: 0.85rem;
+                margin-top: 5px;
+                font-weight: 500;
+            }
+
+            /* ======= PERBAIKAN TEXT READABLE ======= */
+            .text-readable {
+                color: rgba(255, 255, 255, 0.95) !important;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            }
+
+            /* ======= GLOW EFFECT PADA FOCUS ======= */
+            @keyframes input-glow {
+                0% { box-shadow: 0 0 0 0 rgba(255, 158, 0, 0.7); }
+                70% { box-shadow: 0 0 0 6px rgba(255, 158, 0, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(255, 158, 0, 0); }
+            }
+
+            .form-control:focus {
+                animation: input-glow 0.6s ease;
+            }
+            /* Slot Grid */
+            .slot-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 12px;
+                margin: 1.5rem 0;
+            }
+
+            .slot {
+                padding: 12px;
+                text-align: center;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: var(--transition);
+                border: 2px solid transparent;
+                font-weight: 500;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .slot::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: currentColor;
+                opacity: 0.1;
+                z-index: -1;
+            }
+
+            .slot.available {
+                background: rgba(46, 204, 113, 0.1);
+                color: var(--success);
+                border-color: rgba(46, 204, 113, 0.3);
+            }
+
+            .slot.available:hover {
+                background: rgba(46, 204, 113, 0.2);
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+            }
+
+            .slot.selected {
+                background: var(--accent);
+                color: white;
+                border-color: var(--accent);
+                transform: scale(1.05);
+                box-shadow: 0 5px 20px rgba(255, 127, 17, 0.3);
+            }
+
+            .slot.unavailable {
+                background: rgba(231, 76, 60, 0.1);
+                color: var(--danger);
+                border-color: rgba(231, 76, 60, 0.3);
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+
+            .slot.booked {
+                background: rgba(231, 76, 60, 0.2);
+                color: var(--danger);
+                border-color: rgba(231, 76, 60, 0.4);
+                cursor: not-allowed;
+                position: relative;
+            }
+
+            .slot.booked::after {
+                content: '✗';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 1.5rem;
+                opacity: 0.5;
+            }
+
+            /* Button Styling */
+            .btn {
+                padding: 12px 30px;
+                border-radius: 15px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: var(--transition);
+                border: none;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: 0.5s;
+            }
+
+            .btn:hover::before {
+                left: 100%;
+            }
+
+            .btn-primary {
+                background: linear-gradient(45deg, var(--primary), var(--secondary));
+                border: none;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(10, 36, 99, 0.3);
+            }
+
+            .btn-warning {
+                background: linear-gradient(45deg, var(--accent), #ff9e00);
+                border: none;
+                color: white;
+            }
+
+            .btn-warning:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(255, 127, 17, 0.3);
+            }
+
+            .btn-success {
+                background: linear-gradient(45deg, var(--success), #27ae60);
+                border: none;
+                color: white;
+            }
+
+            .btn-success:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+            }
+
+            /* Invoice Styling */
+            .invoice {
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--card-border);
+                border-radius: 25px;
+                padding: 2.5rem;
+                margin-top: 2rem;
+                animation: slideInUp 0.5s ease;
+            }
+
+            .invoice-header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            .invoice-header h3 {
+                color: var(--accent);
+                font-weight: 600;
+            }
+
+            .invoice-details {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 15px;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .invoice-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .invoice-item:last-child {
+                border-bottom: none;
+            }
+
+            .invoice-total {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--success);
+                text-align: right;
+                margin-top: 1rem;
+            }
+
+            /* History Styling */
+            .history-item {
+                background: var(--card-bg);
+                border: 1px solid var(--card-border);
+                border-radius: 20px;
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .history-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 4px;
+                background: linear-gradient(to bottom, var(--accent), var(--secondary));
+            }
+
+            .history-item:hover {
+                transform: translateX(10px);
+                border-color: var(--accent);
+            }
+
+            /* Footer */
+            footer {
+                background: rgba(10, 36, 99, 0.95);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin-top: auto;
+                padding: 3rem 0 1rem;
+            }
+
+            .footer-logo {
+                font-size: 2rem;
+                font-weight: 700;
+                background: linear-gradient(45deg, var(--accent), #ff9e00);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 1rem;
+            }
+
+            .footer-links a {
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
+                transition: var(--transition);
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .footer-links a:hover {
+                color: var(--accent);
+                transform: translateX(5px);
+            }
+
+
+            /* Animations */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            /* Loading Spinner */
+            .spinner {
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                border-top-color: var(--accent);
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+
+            /* Toast Notification */
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--card-bg);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--card-border);
+                border-radius: 15px;
+                padding: 1rem 1.5rem;
+                color: white;
+                box-shadow: var(--shadow);
+                z-index: 1000;
+                animation: slideInUp 0.3s ease;
+                max-width: 350px;
+            }
+
+            .toast.success {
+                border-left: 4px solid var(--success);
+            }
+
+            .toast.error {
+                border-left: 4px solid var(--danger);
+            }
+
+            .toast.info {
+                border-left: 4px solid var(--accent);
+            }
+
+            /* Page Transitions */
+            /* Perbaiki CSS untuk page transitions */
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pastikan semua page memiliki min-height */
+        .page {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+            .fab:hover {
+                transform: scale(1.1) rotate(90deg);
+            }
+
+            /* Statistics Cards */
+            .stats-card {
+                background: var(--card-bg);
+                border-radius: 20px;
+                padding: 2rem;
+                text-align: center;
+                border: 1px solid var(--card-border);
+                transition: var(--transition);
+            }
+
+            .stats-card:hover {
+                border-color: var(--accent);
+                transform: translateY(-5px);
+            }
+
+            .stats-number {
+                font-size: 2.5rem;
+                font-weight: 700;
+                background: linear-gradient(45deg, var(--accent), var(--success));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.5rem;
+            }
+
+            .stats-label {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            /* Progress Bar */
+            .progress-bar {
+                height: 8px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+                overflow: hidden;
+                margin: 1rem 0;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--accent), var(--success));
+                border-radius: 4px;
+                transition: width 1s ease;
+            }
+
+            /* Badge */
+            .badge {
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .badge-success {
+                background: rgba(46, 204, 113, 0.2);
+                color: var(--success);
+                border: 1px solid rgba(46, 204, 113, 0.3);
+            }
+
+            .badge-warning {
+                background: rgba(255, 127, 17, 0.2);
+                color: var(--accent);
+                border: 1px solid rgba(255, 127, 17, 0.3);
+            }
+
+            .badge-info {
+                background: rgba(36, 123, 160, 0.2);
+                color: var(--secondary);
+                border: 1px solid rgba(36, 123, 160, 0.3);
+            }
+
+            /* Perbaikan Teks yang Tidak Terbaca */
+            .text-readable {
+                color: rgba(255, 255, 255, 0.9) !important;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .card-text {
+                color: rgba(255, 255, 255, 0.8) !important;
+                line-height: 1.6;
+            }
+
+            .form-control {
+                background: rgba(255, 255, 255, 0.08) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                color: rgba(255, 255, 255, 0.95) !important;
+            }
+
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            .feature-badge {
+                background: rgba(255, 255, 255, 0.1) !important;
+                color: rgba(255, 255, 255, 0.9) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                font-weight: 500;
+            }
+
+            .card-price {
+                color: #4cd964 !important;
+                font-weight: 700;
+                font-size: 1.4rem;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Dropdown untuk Filter History */
+            .history-filter {
+                position: relative;
+                display: inline-block;
+            }
+
+            .history-filter-btn {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .history-filter-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .history-filter-content {
+                display: none;
+                position: absolute;
+                background: rgba(10, 36, 99, 0.95);
+                backdrop-filter: blur(10px);
+                min-width: 160px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+                z-index: 1;
+                border-radius: 10px;
+                overflow: hidden;
+                margin-top: 5px;
+            }
+
+            .history-filter-content a {
+                color: white;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                transition: background 0.3s ease;
+            }
+
+            .history-filter-content a:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .history-filter:hover .history-filter-content {
+                display: block;
+            }
+
+            /* Tambahkan di bagian CSS */
+            .navbar .dropdown-menu {
+                background: rgba(10, 36, 99, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                margin-top: 10px;
+                min-width: 200px;
+            }
+
+            .navbar .dropdown-item {
+                color: rgba(255, 255, 255, 0.8);
+                padding: 10px 15px;
+                transition: var(--transition);
+                border-radius: 5px;
+                margin: 2px 5px;
+            }
+
+            .navbar .dropdown-item:hover {
+                background: rgba(255, 127, 17, 0.1);
+                color: var(--accent);
+            }
+
+            .navbar .dropdown-header {
+                color: var(--accent);
+                font-size: 0.85rem;
+                font-weight: 600;
+                padding: 5px 15px;
+                margin-top: 5px;
+            }
+
+            .navbar .dropdown-item.active {
+                background: rgba(255, 127, 17, 0.2);
+                color: var(--accent);
+                font-weight: 600;
+            }
+
+            .navbar .dropdown-divider {                
+                border-color: rgba(255, 255, 255, 0.1);
+                margin: 5px 0;
+            }
+
+            /* ======= ADMIN PANEL STYLES ======= */
+.admin-container {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+    position: relative;
+    z-index: 1; /* Tambahkan ini */
+}
+
+.admin-sidebar {
+    background: rgba(10, 36, 99, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    height: calc(100vh - 120px);
+    position: sticky;
+    top: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-content {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: calc(100vh - 120px);
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+/* Tombol di dalam tabel */
+.admin-table-content .btn {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+    transition: var(--transition) !important;
+}
+
+.admin-table-content .btn:hover {
+    transform: translateY(-2px) !important;
+}
+
+.admin-table-content .btn-outline-light {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.admin-table-content .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+}
+
+.admin-table-content .btn-success {
+    background: linear-gradient(45deg, var(--success), #27ae60) !important;
+    border: none !important;
+}
+
+.admin-table-content .btn-outline-info {
+    background: transparent !important;
+    border: 1px solid rgba(36, 123, 160, 0.5) !important;
+    color: var(--secondary) !important;
+}
+
+.admin-table-content .btn-outline-info:hover {
+    background: rgba(36, 123, 160, 0.2) !important;
+}
+
+.admin-nav-link:hover,
+.admin-nav-link.active {
+    background: rgba(255, 127, 17, 0.1);
+    color: var(--accent);
+    transform: translateX(5px);
+}
+
+.admin-nav-link i {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.admin-table {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-table thead {
+    background: rgba(10, 36, 99, 0.8);
+}
+
+.admin-table th {
+    color: var(--accent);
+    font-weight: 600;
+    padding: 15px;
+    border: none;
+}
+
+.admin-table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ======= PERBAIKAN TABEL ADMIN YANG KOMPREHENSIF ======= */
+
+/* Reset semua styling Bootstrap untuk tabel admin */
+.admin-table-content {
+    width: 100%;
+    border-collapse: collapse !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+/* HEADER */
+.admin-table-content thead {
+    background: rgba(10, 36, 99, 0.95) !important;
+    backdrop-filter: blur(10px);
+}
+
+.admin-table-content th {
+    color: var(--accent) !important;
+    font-weight: 600;
+    padding: 18px 15px !important;
+    text-align: left;
+    border: none !important;
+    border-bottom: 2px solid var(--accent) !important;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* BODY */
+.admin-table-content tbody {
+    background: rgba(10, 36, 99, 0.6) !important;
+}
+
+.admin-table-content tbody tr {
+    background: rgba(10, 36, 99, 0.6) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: var(--transition);
+}
+
+.admin-table-content tbody tr:hover {
+    background: rgba(10, 36, 99, 0.8) !important;
+    transform: translateX(5px);
+}
+
+.admin-table-content td {
+    padding: 16px 15px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    vertical-align: middle;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.admin-table-content td:last-child {
+    border-right: none !important;
+}
+
+/* Untuk sel kosong (colspan) */
+.admin-table-content tbody tr td[colspan] {
+    background: rgba(10, 36, 99, 0.8) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-align: center !important;
+    padding: 40px 20px !important;
+    font-size: 1.1rem;
+}
+
+/* Center alignment untuk kolom aksi */
+.admin-table-content td.text-center {
+    text-align: center !important;
+}
+
+/* Badge di dalam tabel */
+.admin-table-content .badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card.table-admin .card-body {
+        overflow-x: auto;
+    }
+    
+    .admin-table-content {
+        min-width: 800px;
+    }
+    
+    .admin-table-content th,
+    .admin-table-content td {
+        padding: 12px 10px !important;
+        font-size: 0.85rem;
+    }
+}
+
+/* Warna khusus untuk badge */
+.admin-table-content .badge-warning {
+    background: rgba(255, 127, 17, 0.2) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(255, 127, 17, 0.3) !important;
+}
+
+.admin-table-content .badge-success {
+    background: rgba(46, 204, 113, 0.2) !important;
+    color: var(--success) !important;
+    border: 1px solid rgba(46, 204, 113, 0.3) !important;
+}
+
+.admin-table-content .badge-info {
+    background: rgba(36, 123, 160, 0.2) !important;
+    color: var(--secondary) !important;
+    border: 1px solid rgba(36, 123, 160, 0.3) !important;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-confirm-admin {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.btn-confirm-admin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-admin {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+}
+
+.payment-proof-preview {
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--accent);
+}
+
+.payment-proof-preview:hover {
+    transform: scale(1.05);
+    color: #ff9e00;
+}
+
+.stats-card-admin {
+    background: linear-gradient(135deg, rgba(10, 36, 99, 0.8), rgba(36, 123, 160, 0.8));
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 127, 17, 0.3);
+    margin-bottom: 1rem;
+}
+
+.stats-number-admin {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.stats-label-admin {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.admin-search {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.admin-search:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 127, 17, 0.2);
+}
+
+/* Tombol akses admin */
+.admin-access-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 127, 17, 0.3);
+    transition: var(--transition);
+}
+
+.admin-access-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 127, 17, 0.4);
+}
+
+/* Tambahkan di CSS */
+.modal-backdrop {
+    z-index: 1040;
+}
+
+.modal {
+    z-index: 1050;
+}
+
+.modal-content {
+    background: rgba(10, 36, 99, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 20px !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 127, 17, 0.3) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 127, 17, 0.3) !important;
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Modal admin */
+.admin-modal .modal-content {
+    background: rgba(10, 36, 99, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+    border-radius: 20px;
+}
+
+/* QR Login */
+.qr-login-container {
+    max-width: 400px;
+    margin: 150px auto;
+    padding: 2rem;
+    background: rgba(10, 36, 99, 0.9);
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#qrCodeAdmin {
+    margin: 20px auto;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Modal bukti transfer */
+#proofModal .modal-content {
+    background: rgba(10, 36, 99, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+    border-radius: 20px;
+}
+
+#proofModal .modal-header {
+    border-bottom: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+#proofModal .modal-footer {
+    border-top: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+/* Modal konfirmasi simpel */
+#simpleConfirmModal .modal-content {
+    background: rgba(10, 36, 99, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+    border-radius: 15px;
+}
+
+#simpleConfirmModal .modal-header {
+    border-bottom: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+#simpleConfirmModal .modal-footer {
+    border-top: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+/* Badge di modal */
+.badge-warning {
+    background: rgba(255, 127, 17, 0.2);
+    color: var(--accent);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.badge-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Style untuk modal detail booking */
+.booking-detail-container {
+    padding: 10px;
+}
+
+.booking-detail-list {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.booking-detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.booking-detail-item:last-child {
+    border-bottom: none;
+}
+
+.booking-detail-label {
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 150px;
+}
+
+.booking-detail-value {
+    color: rgba(255, 255, 255, 0.9);
+    text-align: right;
+    flex: 1;
+}
+
+.payment-status {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.status-pending {
+    background: rgba(255, 127, 17, 0.2);
+    color: var(--accent);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+.status-confirmed {
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+        /* ... CSS YANG SUDAH ADA ... */
+
+/* ======= TAMBAHKAN DI SINI (DI AKHIR STYLE) ======= */
+/* CSS Admin Panel */
+.table-admin {
+    background: rgba(255, 250, 250, 0.02);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-admin thead {
+    background: rgba(10, 36, 99, 0.8);
+}
+
+.table-admin th {
+    color: var(--accent);
+    font-weight: 600;
+    padding: 15px;
+    border: none;
+    border-bottom: 2px solid var(--accent);
+}
+
+/* Tambahkan di bagian CSS Admin Panel */
+.table-admin tbody tr td[colspan] {
+    background: rgba(10, 36, 99, 0.8) !important; /* Warna biru sama seperti header */
+    color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Atau lebih spesifik untuk pesan "Tidak ada data" */
+.table-admin tbody tr td {
+    background: rgba(255, 255, 255, 0.02) !important; /* Warna background biru gelap */
+}
+
+.table-admin tbody tr td.text-center {
+    background: rgba(10, 36, 99, 0.6) !important; /* Warna biru untuk sel kosong */
+}
+
+.table-admin td {
+    padding: 12px 15px;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.stats-card-admin {
+    background: linear-gradient(135deg, rgba(10, 36, 99, 0.8), rgba(36, 123, 160, 0.8));
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+.stats-number-admin {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stats-label-admin {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: rgba(255, 127, 17, 0.2);
+    color: var(--accent);
+    border: 1px solid rgba(255, 127, 17, 0.3);
+}
+
+.badge-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+/* ======= PERBAIKAN TABEL RESPONSIF ======= */
+.card.table-admin {
+    overflow: hidden;
+}
+
+.card.table-admin .card-body {
+    padding: 0;
+    overflow-x: auto; /* Membuat scroll horizontal di dalam card */
+}
+
+.card.table-admin table {
+    min-width: 800px; /* Minimal width untuk desktop */
+    width: 100%;
+    margin: 0;
+}
+
+/* Scrollbar untuk tabel di dalam card */
+.card.table-admin .card-body::-webkit-scrollbar {
+    height: 8px;
+}
+
+.card.table-admin .card-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.card.table-admin .card-body::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.card.table-admin .card-body::-webkit-scrollbar-thumb:hover {
+    background: #ff9e00;
+}
+
+/* Untuk layar kecil, gunakan layout vertikal */
+@media (max-width: 768px) {
+    .card.table-admin table {
+        min-width: unset;
+        display: block;
+    }
+    
+    .card.table-admin thead {
+        display: none; /* Sembunyikan header di mobile */
+    }
+    
+    .card.table-admin tbody,
+    .card.table-admin tr,
+    .card.table-admin td {
+        display: block;
+        width: 100%;
+    }
+    
+    .card.table-admin tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px 0;
+        position: relative;
+    }
+    
+    .card.table-admin td {
+        padding: 8px 15px;
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    
+    .card.table-admin td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        text-align: left;
+        font-weight: 600;
+        color: var(--accent);
+    }
+    
+    .card.table-admin td:last-child {
+        text-align: center;
+        padding-left: 15px;
+    }
+    
+    .card.table-admin td:last-child:before {
+        display: none;
+    }
+}
+/* ======= SAMPAI DI SINI ======= */
+
+
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .hero-title {
+                    font-size: 2.5rem;
+                }
+                
+                .slot-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                }
+                
+                .form-container {
+                    padding: 1.5rem;
+                }
+                
+                .card {
+                    margin-bottom: 1.5rem;
+                }
+                
+                .d-flex.justify-content-between.mb-4 {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .modal-content {
+            background: var(--card-bg) !important;
+            backdrop-filter: blur(20px) !important;
+            border: 1px solid var(--accent) !important;
+            border-radius: 20px !important;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 127, 17, 0.3) !important;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(255, 127, 17, 0.3) !important;
+        }
+        
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        
+        
+        .booking-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .booking-detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .booking-detail-label {
+            color: var(--accent);
+            font-weight: 600;
+            min-width: 150px;
+        }
+        
+        .booking-detail-value {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: right;
+            flex: 1;
+        }
+        
+        .payment-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .status-pending {
+            background: rgba(255, 127, 17, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(255, 127, 17, 0.3);
+        }
+        
+        .status-confirmed {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .status-completed {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        
+        .status-cancelled {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .payment-method-card {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .payment-method-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+        
+        .payment-method-card .form-check-input {
+            margin-top: 0;
+        }
+        
+        .payment-method-card .form-check-input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .payment-card-content {
+            text-align: center;
+        }
+        
+        .file-upload-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .file-upload-container:hover {
+            border-color: var(--accent) !important;
+            background: rgba(255, 127, 17, 0.05);
+        }
+        
+        .payment-instruction {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+    }
+    </style>
+
+    </head>
+    <body>
+        <!-- Navbar -->
+        
+    <!-- Ganti bagian navbar dengan yang ini -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNavbar">
+    <div class="container mb-0">
+        <a class="navbar-brand" href="#" onclick="showPage('landing')">
+            <img src="img/courtify logo.png" alt="Courtify">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="showPage('landing'); animateNavbar()">
+                        <i class="fas fa-home me-1"></i> <span data-translate="home">Beranda</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showPage('daftar'); animateNavbar()">
+                        <i class="fas fa-map-marker-alt me-1"></i> <span data-translate="courts">Lapangan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showPage('history'); animateNavbar()">
+                        <i class="fas fa-history me-1"></i> <span data-translate="history">Riwayat</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showPage('team'); animateNavbar()">
+                        <i class="fas fa-users me-1"></i> <span data-translate="team">Tim</span>
+                    </a>
+                </li>
+                <!-- TAMBAHKAN INI: Menu Admin -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showAdminLogin(); animateNavbar()">
+                        <i class="fas fa-user-shield me-1"></i> <span>Admin</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-globe me-1"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="setLanguage('id')">Indonesia</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="setLanguage('en')">English</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+        
+
+        <!-- Landing Page -->
+        <section id="landing" class="page active">
+            <div class="hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <h1 class="hero-title" data-translate="hero_title">Courtify</h1>
+                        <p class="hero-subtitle text-readable" data-translate="hero_subtitle">Booking lapangan olahraga premium dengan pengalaman terbaik...</p>
+                        <button class="btn btn-warning btn-lg" onclick="showPage('daftar')">
+                            <i class="fas fa-search me-2"></i> <span data-translate="explore_courts">Jelajahi Lapangan</span>
+                        </button>
+                        <button class="btn btn-outline-light btn-lg" onclick="showPage('booking')">
+                            <i class="fas fa-calendar-alt me-2"></i> <span data-translate="book_now">Booking Langsung</span>
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container py-5">
+                <div class="row mb-5">
+                    <h2 class="text-center mb-4 pt-2 pb-4" style="color: var(--accent);" data-translate="activities">Aktivitas</h2>
+                    <div class="col-md-3 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-number" id="total-bookings">128</div>
+                            <div class="stats-label" data-translate="completed_bookings">Booking Selesai</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-number" id="available-courts">4</div>
+                            <div class="stats-label" data-translate="court_types">Jenis Lapangan</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-number" id="happy-customers">98%</div>
+                            <div class="stats-label" data-translate="customer_satisfaction">Kepuasan Pelanggan</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="stats-card">
+                            <div class="stats-number" id="booking-success">100%</div>
+                            <div class="stats-label" data-translate="success_rate">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-center mb-4 pt-2 pb-4" style="color: var(--accent);" data-translate="why_choose">Mengapa Memilih Courtify?</h2>
+                <div class="row mb-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-bolt fa-3x" style="color: var(--accent);"></i>
+                                </div>
+                                <h5 class="card-title text-readable" data-translate="instant_booking">Booking Instan</h5>
+                                <p class="card-text text-readable" data-translate="instant_desc">Proses booking hanya dalam 3 langkah...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-shield-alt fa-3x" style="color: var(--accent);"></i>
+                                </div>
+                                <h5 class="card-title text-readable" data-translate="secure_payment">Pembayaran Aman</h5>
+                                <p class="card-text text-readable" data-translate="secure_desc">Sistem pembayaran terenkripsi dengan berbagai metode pembayaran.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-headset fa-3x" style="color: var(--accent);"></i>
+                                </div>
+                                <h5 class="card-title text-readable" data-translate="support_24">Support 24/7</h5>
+                                <p class="card-text text-readable" data-translate="support_desc">Tim support siap membantu kapan saja melalui WhatsApp dan email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Court Selection -->
+        <section id="daftar" class="page">
+            <div class="container pt-5 pb-5">
+                <div class="text-center mb-5 pt-5">
+                    <h1 class="hero-title pt-5" data-translate="choose_court">Pilih Lapangan Favorit Anda</h1>
+                    <p class="hero-subtitle text-readable" data-translate="court_subtitle">Semua lapangan tersedia dengan fasilitas premium dan harga terbaik</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card" onclick="selectCourt('badminton')">
+                            <img src="/img/badminton.jpg" 
+                                class="card-img-top" alt="Badminton Court">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title text-readable">Badminton</h5>
+                                    <span class="badge badge-success" data-translate="available">Tersedia</span>
+                                </div>
+                                <div class="card-price text-readable">Rp 50.000 / jam</div>
+                                <div class="card-features mb-3">
+                                    <span class="feature-badge"><i class="fas fa-wifi me-1"></i> WiFi</span>
+                                    <span class="feature-badge"><i class="fas fa-parking me-1"></i> Parkir</span>
+                                    <span class="feature-badge"><i class="fas fa-snowflake me-1"></i> AC</span>
+                                    <span class="feature-badge"><i class="fas fa-music me-1"></i> Sound System</span>
+                                </div>
+                                <p class="card-text text-readable small mb-3" data-translate="padel_desc">Lapangan standar internasional dengan lighting professional. Permukaan kayu maple berkualitas tinggi.</p>
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-plus me-2"></i> Pilih Lapangan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <div class="card" onclick="selectCourt('futsal')">
+                            <img src="/img/futsal.jpg" 
+                                class="card-img-top" alt="Futsal Court">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title text-readable">Futsal</h5>
+                                    <span class="badge badge-success">Tersedia</span>
+                                </div>
+                                <div class="card-price text-readable">Rp 75.000 / jam</div>
+                                <div class="card-features mb-3">
+                                    <span class="feature-badge"><i class="fas fa-utensils me-1"></i> <span data-translate="canteen">Kantin</span></span>
+                                    <span class="feature-badge"><i class="fas fa-shower me-1"></i> <span data-translate="shower">Shower</span></span>
+                                    <span class="feature-badge"><i class="fas fa-music me-1"></i> <span data-translate="sound_system">Sound System</span></span>
+                                </div>
+                                <p class="card-text text-readable small mb-3" data-translate="futsal_desc">Rumput sintetis premium dengan safety mat berkualitas. Sistem drainase yang baik.</p>
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-plus me-2"></i> <span data-translate="select_court">Pilih Lapangan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <div class="card" onclick="selectCourt('basket')">
+                            <img src="/img/basket.jpg" 
+                                class="card-img-top" alt="Basketball Court">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title text-readable">Basket</h5>
+                                    <span class="badge badge-warning" data-translate="almost_full">Hampir Penuh</span>
+                                </div>
+                                <div class="card-price text-readable">Rp 60.000 / jam</div>
+                                <div class="card-features mb-3">
+                                    <span class="feature-badge"><i class="fas fa-wifi me-1"></i> <span data-translate="wifi">WiFi</span></span>
+                                    <span class="feature-badge"><i class="fas fa-parking me-1"></i> <span data-translate="parking">Parkir</span></span>
+                                    <span class="feature-badge"><i class="fas fa-tv me-1"></i> <span data-translate="scoreboard">Scoreboard</span></span>
+                                </div>
+                                <p class="card-text text-readable small mb-3" data-translate="basket_desc">Lapangan indoor dengan floor khusus dan ring profesional. Pencahayaan LED yang optimal.</p>
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-plus me-2"></i> <span data-translate="select_court">Pilih Lapangan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <div class="card" onclick="selectCourt('padel')">
+                            <img src="/img/padel.jpeg" 
+                                class="card-img-top" alt="Padel Court">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title text-readable">Padel Tennis</h5>
+                                    <span class="badge badge-success">Tersedia</span>
+                                </div>
+                                <div class="card-price text-readable">Rp 80.000 / jam</div>
+                                <div class="card-features mb-3">
+                                    <span class="feature-badge"><i class="fas fa-utensils me-1"></i> <span data-translate="canteen">Kantin</span></span>
+                                    <span class="feature-badge"><i class="fas fa-shower me-1"></i> <span data-translate="shower">Shower</span></span>
+                                    <span class="feature-badge"><i class="fas fa-fan me-1"></i> <span data-translate="ventilation">Ventilasi</span></span>
+                                </div>
+                                <p class="card-text text-readable small mb-3" data-translate="badminton_desc">Lapangan standar internasional dengan dinding kaca premium. Pencahayaan yang merata.</p>
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-plus me-2"></i> <span data-translate="select_court">Pilih Lapangan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Form -->
+        <section id="booking" class="page">
+            <div class="container py-5">
+                <div class="text-center mb-5 pt-5">
+                    <h1 class="hero-title pt-5" data-translate="booking_title">Booking Lapangan</h1>
+                    <p class="hero-subtitle text-readable" data-translate="booking_subtitle">Isi data booking Anda dengan lengkap...</p>
+                </div>
+
+                <div class="form-container">
+                    <form id="bookingForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="full_name">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama" required 
+                                    data-placeholder="full_name" placeholder="Masukkan nama lengkap Anda">
+                                <div class="invalid-feedback">Nama harus diisi</div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="whatsapp">Nomor WhatsApp</label>
+                                <input type="tel" class="form-control" id="wa" required 
+                                    data-placeholder="whatsapp" placeholder="Contoh: 0812-3456-7890">
+                                <div class="invalid-feedback">Nomor WhatsApp harus valid</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="email">Email Address</label>
+                                <input type="email" class="form-control" id="email" required 
+                                    data-placeholder="email" placeholder="contoh.nama@gmail.com">
+                                <div class="invalid-feedback" id="email-error">Email harus @gmail.com</div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="booking_date">Tanggal Booking</label>
+                                <input type="date" class="form-control" id="tanggal" onchange="loadSlots()" required>
+                                <div class="invalid-feedback">Pilih tanggal booking</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="choose_field">Pilih Lapangan</label>
+                                <select class="form-control" id="lapangan" onchange="updatePrice()" required>
+                                    <option value="">-- Pilih Lapangan --</option>
+                                    <option value="badminton" data-price="50000">Badminton - Rp 50.000/jam</option>
+                                    <option value="futsal" data-price="75000">Futsal - Rp 75.000/jam</option>
+                                    <option value="basket" data-price="60000">Basket - Rp 60.000/jam</option>
+                                    <option value="padel" data-price="80000">Padel Tennis - Rp 80.000/jam</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" data-translate="duration">Durasi Booking</label>
+                                <select class="form-control" id="durasi" onchange="calculateTotal()" required>
+                                    <option value="60">60 menit</option>
+                                    <option value="90">90 menit</option>
+                                    <option value="120">120 menit</option>
+                                    <option value="180">180 menit</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" data-translate="choose_time">Pilih Jam Mulai</label>
+                            <div id="slots" class="slot-grid"></div>
+                            <div class="mt-3 text-center">
+                                <small class="text-muted text-readable">
+                                    <span class="text-success"><i class="fas fa-square me-1"></i> <span data-translate="available_slot">Tersedia</span></span> | 
+                                    <span class="text-danger"><i class="fas fa-square me-1"></i> <span data-translate="booked_slot">Terbooking</span></span> | 
+                                    <span class="text-warning"><i class="fas fa-square me-1"></i> <span data-translate="unavailable_slot">Tidak Tersedia</span></span>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" data-translate="additional_message">Pesan Tambahan (Opsional)</label>
+                            <textarea class="form-control" id="pesan" rows="3" 
+                                data-placeholder="additional_message" placeholder="Tulis pesan tambahan atau permintaan khusus..."></textarea>
+                        <div class="mb-4">
+                            <label class="form-label" data-translate="payment_method">Metode Pembayaran</label>
+                            <div class="payment-methods mb-3">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-check payment-method-card">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                id="bankTransfer" value="bank_transfer" checked>
+                                            <label class="form-check-label w-100" for="bankTransfer">
+                                                <div class="payment-card-content">
+                                                    <i class="fas fa-university fa-2x mb-2 text-primary"></i>
+                                                    <h6 data-translate="bank_transfer">Transfer Bank</h6>
+                                                    <small class="text-muted">BCA, Mandiri, BRI, BNI</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check payment-method-card">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                id="eWallet" value="e_wallet">
+                                            <label class="form-check-label w-100" for="eWallet">
+                                                <div class="payment-card-content">
+                                                    <i class="fas fa-wallet fa-2x mb-2 text-success"></i>
+                                                    <h6 data-translate="e_wallet">E-Wallet</h6>
+                                                    <small class="text-muted">OVO, Gopay, Dana, ShopeePay</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check payment-method-card">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                id="virtualAccount" value="virtual_account">
+                                            <label class="form-check-label w-100" for="virtualAccount">
+                                                <div class="payment-card-content">
+                                                    <i class="fas fa-credit-card fa-2x mb-2 text-warning"></i>
+                                                    <h6 data-translate="virtual_account">Virtual Account</h6>
+                                                    <small class="text-muted">VA BCA, Mandiri, BRI</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment Instructions -->
+                            <div id="paymentInstructions" class="mt-3 p-3 bg-dark rounded">
+                                <h6 class="text-warning mb-2">Instruksi Pembayaran:</h6>
+                                <div id="bankInstructions" class="payment-instruction">
+                                    <p class="small mb-1">• Transfer ke BCA: 1234567890 (Courtify)</p>
+                                    <p class="small mb-1">• Transfer ke Mandiri: 0987654321 (Courtify)</p>
+                                    <p class="small mb-0">• Transfer ke BRI: 1122334455 (Courtify)</p>
+                                </div>
+                                <div id="ewalletInstructions" class="payment-instruction d-none">
+                                    <p class="small mb-1">• OVO: 081234567890</p>
+                                    <p class="small mb-1">• Gopay: 081234567890</p>
+                                    <p class="small mb-0">• Dana: 081234567890</p>
+                                </div>
+                                <div id="vaInstructions" class="payment-instruction d-none">
+                                    <p class="small mb-1">• VA BCA: 888880123456789</p>
+                                    <p class="small mb-1">• VA Mandiri: 888880987654321</p>
+                                    <p class="small mb-0">• VA BRI: 888881122334455</p>
+                                </div>
+                            </div>
+                        </div>
+
+    <div class="mb-4">
+        <label class="form-label" data-translate="upload_receipt">Upload Bukti Transfer</label>
+        <div class="file-upload-area">
+            <input type="file" class="form-control d-none" id="paymentProof" 
+                accept="image/*,.pdf,.jpg,.jpeg,.png">
+            <div class="file-upload-container border rounded p-4 text-center">
+                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                <h5 data-translate="choose_file">Pilih File</h5>
+                <p class="small mb-3" data-translate="upload_note">
+                    Format: JPG, PNG, PDF (Maks. 5MB)
+                </p>
+                <button type="button" class="btn btn-outline-warning" onclick="document.getElementById('paymentProof').click()">
+                    <i class="fas fa-upload me-2"></i> Upload File
+                </button>
+                <div class="mt-3" id="fileName">
+                    <small class="mb-0" data-translate="no_file_chosen">Belum ada file dipilih</small>
+                </div>
+            </div>
+            <div class="preview-container mt-3 d-none" id="previewContainer">
+                <img id="previewImage" class="img-fluid rounded border" style="max-height: 200px;">
+                <div id="pdfPreview" class="d-none">
+                    <div class="alert alert-info bg-dark border-info">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        <span id="pdfFileName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                        <div class="invoice-item">
+                            <span data-translate="field_cost">Biaya Lapangan:</span>
+                            <span id="biaya-lapangan">Rp 0</span>
+                        </div>
+                        <div class="invoice-item">
+                            <span data-translate="duration_text">Durasi:</span>
+                            <span id="durasi-text">0 menit</span>
+                        </div>
+                        <div class="invoice-item">
+                            <span data-translate="peak_hour">Biaya Tambahan (Peak Hour):</span>
+                            <span id="peak-hour">Rp 0</span>
+                        </div>
+                        <div class="invoice-total">
+                            <span data-translate="total">Total:</span> <span id="total-harga">Rp 0</span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-success btn-lg" onclick="processBooking()">
+                                <i class="fas fa-lock me-2"></i> <span data-translate="proceed_payment">Lanjutkan ke Pembayaran</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Invoice Section -->
+        <section id="invoice" class="page">
+            <div class="container py-5">
+                <div class="text-center mb-5 pt-5">
+                    <h1 class="hero-title pt-5" data-translate="invoice_title">Invoice Booking</h1>
+                    <p class="hero-subtitle text-readable" data-translate="invoice_subtitle">Review dan konfirmasi booking Anda</p>
+                </div>
+
+                <div class="invoice">
+                    <div class="invoice-header">
+                        <h3><i class="fas fa-receipt me-2 pt-5"></i> Invoice #<span id="invoice-number">001</span></h3>
+                    <div class="invoice-details text-readable">
+                        <div class="invoice-item pt-0">
+                        <span data-translate="booking_code">Kode Booking:</span>
+                        <span class="badge badge-info" id="booking-code">CTF-001</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span data-translate="booker_name">Nama Pemesan:</span>
+                        <span id="invoice-nama">-</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span data-translate="field">Lapangan:</span>
+                        <span id="invoice-lapangan">-</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span data-translate="date_time">Tanggal & Waktu:</span>
+                        <span id="invoice-waktu">-</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span data-translate="invoice_duration">Durasi:</span>
+                        <span id="invoice-durasi">-</span>
+                    </div>
+
+                    <div class="invoice-total pt-5 pb-5">
+                        <span data-translate="total_payment">Total Pembayaran:</span> <span id="invoice-total">Rp 0</span>
+                    </div>
+
+
+                    <div class="alert alert-info bg-dark border-info text-readable">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong data-translate="important_info">Informasi Penting:</strong>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <button class="btn btn-warning btn-lg" onclick="confirmBooking()">
+                            <i class="me-2"></i> <span data-translate="confirm_whatsapp">Konfirmasi via WhatsApp</span>
+                        </button>
+                        <button class="btn btn-outline-light btn-lg" onclick="printInvoice()">
+                            <i class="me-2"></i> <span data-translate="print_invoice">Cetak Invoice</span>
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="showPage('daftar')">
+                            <i class="me-2"></i> <span data-translate="book_again">Booking Lagi</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History -->
+        <section id="history" class="page">
+            <div class="container py-5">
+                <div class="text-center mb-5 pt-5">
+                    <h1 class="hero-title pt-5" data-translate="history_title">Riwayat Booking</h1>
+                    <p class="hero-subtitle text-readable" data-translate="history_subtitle">Lihat semua booking yang pernah Anda lakukan</p>
+                </div>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <div class="history-filter">
+                        <div class="history-filter-btn">
+                            <i class="fas fa-filter me-2"></i> <span data-translate="filter_status">Filter Status</span>
+                        </div>
+                        <div class="history-filter-content">
+                            <a href="#" onclick="filterHistory('all')" data-translate="all">Semua</a>
+                            <a href="#" onclick="filterHistory('pending')" data-translate="pending">Pending</a>
+                            <a href="#" onclick="filterHistory('confirmed')" data-translate="confirmed">Dikonfirmasi</a>
+                            <a href="#" onclick="filterHistory('completed')" data-translate="completed">Selesai</a>
+                            <a href="#" onclick="filterHistory('cancelled')" data-translate="cancelled">Dibatalkan</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-warning" onclick="resetHistory()">
+                        <i class="fas fa-sync-alt me-2"></i> <span data-translate="reset_data">Reset Data</span>
+                    </button>
+                </div>
+
+                <div id="historyList" class="mb-4"></div>
+
+                <div class="text-center mt-5">
+                    <div class="spinner" id="loading-spinner" style="display: none;"></div>
+                    <button class="btn btn-primary" onclick="loadMoreHistory()" id="load-more-btn" style="display: none;">
+                        <i class="fas fa-arrow-down me-2"></i> <span data-translate="load_more">Load More</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add modal for booking detail -->
+    <!-- Modal Konfirmasi Simpel -->
+<div class="modal fade" id="simpleConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-dark border border-accent">
+            <div class="modal-header border-bottom border-accent">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Konfirmasi
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="simpleConfirmMessage">Apakah Anda yakin ingin mengkonfirmasi pembayaran ini?</p>
+            </div>
+            <div class="modal-footer border-top border-accent">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-success" id="simpleConfirmBtn">Ya, Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Bukti TF -->
+<div class="modal fade" id="proofModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark border border-accent">
+            <div class="modal-header border-bottom border-accent">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-receipt me-2"></i>
+                    Bukti Pembayaran
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="proofModalContent">
+                    <!-- Konten akan dimuat oleh JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer border-top border-accent">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Team -->
+        <section id="team" class="page">
+            <div class="container py-5">
+                <div class="text-center mb-5 pt-5">
+                    <h1 class="hero-title pt-5">Tim Kami</h1>
+                    <p class="hero-subtitle text-readable">Orang-orang di balik kesuksesan Courtify</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card team-card">
+                            <div class="card-body text-center">
+                                <div class="position-relative mb-3">
+                                    <img src="/Team/a.jpg" 
+                                        class="rounded-circle" width="150" height="150" alt="Team Member">
+                                </div>
+                                <h5 class="card-title text-readable">Dhafin Shabir Alfatih</h5>
+                                <p class="text-muted mb-2">3420230036</p>
+                                <p class="card-text text-readable">Spesialis dalam pengembangan web dan integrasi sistem booking.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card team-card">
+                            <div class="card-body text-center">
+                                <div class="position-relative mb-3">
+                                    <img src="/Team/khim.jpg" 
+                                        class="rounded-circle" width="150" height="150" alt="Team Member">
+                                </div>
+                                <h5 class="card-title text-readable">Khim Jaksel</h5>
+                                <p class="text-muted mb-2">3420230005</p>
+                                <p class="card-text text-readable">Bertanggung jawab atas desain antarmuka yang user-friendly.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card team-card">
+                            <div class="card-body text-center">
+                                <div class="position-relative mb-3">
+                                    <img src="/Team/c.jpg" 
+                                        class="rounded-circle" width="150" height="150" alt="Team Member">
+                                    
+                                </div>
+                                <h5 class="card-title text-readable">Faqih Nur Zaki</h5>
+                                <p class="text-muted mb-2">3420230005</p>
+                                <p class="card-text text-readable">Bertanggung jawab mengimplementasikan desain menjadi tampilan aplikasi yang interaktif..</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card team-card">
+                            <div class="card-body text-center">
+                                <div class="position-relative mb-3">
+                                    <img src="/Team/b.jpg" 
+                                        class="rounded-circle" width="150" height="150" alt="Team Member">
+                                    
+                                </div>
+                                <h5 class="card-title text-readable">Adera Wahyu Sutrisno </h5>
+                                <p class="text-muted mb-2">3420230005</p>
+                                <p class="card-text text-readable">Bertanggung jawab atas desain antarmuka dan pengalaman pengguna agar mudah dan nyaman digunakan.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card team-card">
+                            <div class="card-body text-center">
+                                <div class="position-relative mb-3">
+                                    <img src="/Team/d.jpg" 
+                                        class="rounded-circle" width="150" height="150" alt="Team Member">
+                                    
+                                </div>
+                                <h5 class="card-title text-readable">Arya Saputra</h5>
+                                <p class="text-muted mb-2">342023000</p>
+                                <p class="card-text text-readable">Mengelola database dan logika server untuk performa optimal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- Team section (SUDAH ADA) -->
+    </section>  <!-- PENUTUP SECTION TEAM -->
+
+<!-- ======= TAMBAHKAN DI SINI ======= -->
+<!-- Page Admin -->
+<section id="adminPanel" class="page">
+    <div class="container pt-5 pb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="hero-title pt-5">
+                    <i class="fas fa-user-shield me-2 text-warning pt-5"></i>
+                    Panel Admin
+                </h1>
+                <p class="hero-subtitle text-readable">Kelola booking dan konfirmasi pembayaran</p>
+            </div>
+            <button class="btn btn-outline-warning" onclick="logoutAdmin()">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </button>
+        </div>
+
+        <!-- Statistik -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stats-card-admin">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <div class="stats-number-admin" id="pendingCount">0</div>
+                            <div class="stats-label-admin">Menunggu Konfirmasi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card-admin">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                        <div>
+                            <div class="stats-number-admin" id="confirmedCount">0</div>
+                            <div class="stats-label-admin">Terkonfirmasi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card-admin">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-calendar-alt fa-2x text-info"></i>
+                        </div>
+                        <div>
+                            <div class="stats-number-admin" id="totalBookingsCount">0</div>
+                            <div class="stats-label-admin">Total Booking</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stats-card-admin">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-money-bill-wave fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="stats-number-admin" id="totalRevenue">Rp 0</div>
+                            <div class="stats-label-admin">Total Pendapatan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tabel Pending -->
+<div class="card table-admin mb-4">
+    <div class="card-header border-bottom border-accent">
+        <h5 class="mb-0 text-warning">
+            <i class="fas fa-clock me-2"></i> 
+            Booking Menunggu Konfirmasi
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <!-- Hapus table-responsive dan semua kelas Bootstrap -->
+        <table class="admin-table-content">
+            <thead>
+                <tr>
+                    <th>ID Booking</th>
+                    <th>Nama Customer</th>
+                    <th>Lapangan</th>
+                    <th>Tanggal & Waktu</th>
+                    <th>Total</th>
+                    <th>Bukti TF</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="adminPendingTable">
+                <!-- Data akan muncul -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabel Semua Booking -->
+<div class="card table-admin">
+    <div class="card-header border-bottom border-accent">
+        <h5 class="mb-0 text-warning">
+            <i class="fas fa-list me-2"></i> 
+            Semua Booking
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <!-- Hapus semua kelas Bootstrap -->
+        <table class="admin-table-content">
+            <thead>
+                <tr>
+                    <th>ID Booking</th>
+                    <th>Nama Customer</th>
+                    <th>Lapangan</th>
+                    <th>Tanggal & Waktu</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="adminAllTable">
+                <!-- Data akan muncul -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+        <!-- Modal Konfirmasi Simpel -->
+        <div class="modal fade" id="simpleConfirmModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content bg-dark border border-accent">
+                    <div class="modal-header border-bottom border-accent">
+                        <h5 class="modal-title text-warning">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Konfirmasi
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="simpleConfirmMessage">Apakah Anda yakin ingin mengkonfirmasi pembayaran ini?</p>
+                    </div>
+                    <div class="modal-footer border-top border-accent">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-success" id="simpleConfirmBtn">Ya, Konfirmasi</button>
+                    </div>
+                </div>
+
+
+        <!-- Modal Bukti TF -->
+<div class="modal fade" id="proofModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark border border-accent">
+            <div class="modal-header border-bottom border-accent">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-receipt me-2"></i>
+                    Bukti Pembayaran
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="proofModalContent">
+                    <!-- Konten akan dimuat oleh JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer border-top border-accent">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+<!-- ======= SAMPAI DI SINI ======= -->
+
+        <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-dark border border-accent">
+            <div class="modal-header border-bottom border-accent">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-user-shield me-2"></i> 
+                    Login Admin
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Password Admin</label>
+                    <input type="password" class="form-control" id="adminPassword" 
+                        placeholder="Masukkan password">
+                </div>
+                <div class="alert alert-danger bg-dark border-danger d-none" id="adminLoginError">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Password salah!
+                </div>
+            </div>
+            <div class="modal-footer border-top border-accent">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-warning" onclick="loginAdmin()">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal untuk Detail Booking (History) -->
+<div class="modal fade" id="bookingDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark border border-accent">
+            <div class="modal-header border-bottom border-accent">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Detail Booking
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="bookingDetailContent">
+                    <!-- Konten akan dimuat oleh JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer border-top border-accent">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Tutup
+                </button>
+                <button type="button" class="btn btn-warning" onclick="printBookingDetail()">
+                    <i class="fas fa-print me-2"></i> Cetak
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="footer-logo">Courtify</div>
+                        <p class="text-muted text-readable">Platform booking lapangan olahraga premium dengan pengalaman terbaik.</p>
+                    </div>
+
+                    <div class="col-md-2 mb-4">
+                        <h5 class="mb-3" style="color: var(--accent);" data-translate="navigation">Navigasi</h5>
+                        <div class="footer-links">
+                            <a href="#" onclick="showPage('landing')" data-translate="home">Beranda</a>
+                            <a href="#" onclick="showPage('daftar')" data-translate="courts">Lapangan</a>
+                            <a href="#" onclick="showPage('history')" data-translate="history">Riwayat</a>
+                            <a href="#" onclick="showPage('team')" data-translate="team">Tim</a>
+                        </div>
+                    </div>
+                        <div class="col-md-3 mb-4">
+                        <h5 class="mb-3" style="color: var(--accent);">Kontak</h5>
+                        <div class="footer-links">
+                            <a href="tel:+62881023570416">
+                                <i class="fas fa-phone me-1"></i> +62881023570416
+                            </a>
+                    
+                            <a href="mailto:mikonvidia@gmail.com">
+                                <i class="fas fa-envelope me-2"></i> info@gmail.com
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-4">
+                        <h5 class="mb-3" style="color: var(--accent);">Jam Operasional</h5>
+                        <div class="text-muted text-readable">
+                            <p class="mb-1" data-translate="every_day">Setiap hari: 06:00 - 24:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 pt-4 border-top border-secondary">
+                    <p class="mb-0 text-muted text-readable">
+                        &copy; 2026 Courtify. All rights reserved. | 
+                        <a href="#" class="text-light text-decoration-none ms-2">Privacy Policy</a> | 
+                        <a href="#" class="text-light text-decoration-none ms-2">Terms of Service</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <div id="initialLoader" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+
+        let currentLang = localStorage.getItem('courtify_lang') || 'id';
+        let bookingToConfirm = null; // Tambahkan ini
+        let bookingDataGlobal = {};
+            
+
+
+            // Language configuration
+    const translations = {
+            id: {
+                // Navbar
+                'home': 'Beranda',
+                'courts': 'Lapangan',
+                'history': 'Riwayat',
+                'team': 'Tim',
+    
+                
+                // Landing Page
+                'hero_title': 'Courtify',
+                'hero_subtitle': 'Booking lapangan olahraga premium dengan pengalaman terbaik. Badminton, Futsal, Basket, Padel - semuanya dalam satu platform.',
+                'explore_courts': 'Jelajahi Lapangan',
+                'book_now': 'Booking Langsung',
+                'activities': 'Aktivitas',
+                'completed_bookings': 'Booking Selesai',
+                'court_types': 'Jenis Lapangan',
+                'customer_satisfaction': 'Kepuasan Pelanggan',
+                'success_rate': 'Success Rate',
+                'why_choose': 'Mengapa Memilih Courtify?',
+                'instant_booking': 'Booking Instan',
+                'instant_desc': 'Proses booking hanya dalam 3 langkah dengan konfirmasi real-time.',
+                'secure_payment': 'Pembayaran Aman',
+                'secure_desc': 'Sistem pembayaran terenkripsi dengan berbagai metode pembayaran.',
+                'support_24': 'Support 24/7',
+                'support_desc': 'Tim support siap membantu kapan saja melalui WhatsApp dan email.',
+                
+                // Court Selection
+                'choose_court': 'Pilih Lapangan Favorit Anda',
+                'court_subtitle': 'Semua lapangan tersedia dengan fasilitas premium dan harga terbaik',
+                'available': 'Tersedia',
+                'almost_full': 'Hampir Penuh',
+                'select_court': 'Pilih Lapangan',
+                'per_hour': '/ jam',
+                
+                // Booking Form
+                'booking_title': 'Booking Lapangan',
+                'booking_subtitle': 'Isi data booking Anda dengan lengkap untuk pengalaman terbaik',
+                'full_name': 'Nama Lengkap',
+                'whatsapp': 'Nomor WhatsApp',
+                'email': 'Email Address',
+                'booking_date': 'Tanggal Booking',
+                'choose_field': 'Pilih Lapangan',
+                'duration': 'Durasi Booking',
+                'choose_time': 'Pilih Jam Mulai',
+                'available_slot': 'Tersedia',
+                'booked_slot': 'Terbooking',
+                'unavailable_slot': 'Tidak Tersedia',
+                'additional_message': 'Pesan Tambahan (Opsional)',
+                'field_cost': 'Biaya Lapangan:',
+                'duration_text': 'Durasi:',
+                'peak_hour': 'Biaya Tambahan (Peak Hour):',
+                'total': 'Total:',
+                'proceed_payment': 'Lanjutkan ke Pembayaran',
+                
+                // Payment Methods
+                'payment_method': 'Metode Pembayaran',
+                'upload_receipt': 'Upload Bukti Transfer',
+                'choose_payment': 'Pilih Metode Pembayaran',
+                'bank_transfer': 'Transfer Bank',
+                'e_wallet': 'E-Wallet',
+                'virtual_account': 'Virtual Account',
+                'choose_file': 'Pilih File',
+                'no_file_chosen': 'Belum ada file dipilih',
+                'upload_note': 'Format: JPG, PNG, PDF (Maks. 5MB)',
+                'payment_instructions': 'Instruksi Pembayaran:',
+                
+                // Invoice
+                'invoice_title': 'Invoice Booking',
+                'invoice_subtitle': 'Review dan konfirmasi booking Anda',
+                'invoice_date': 'Tanggal:',
+                'booking_code': 'Kode Booking:',
+                'booker_name': 'Nama Pemesan:',
+                'field': 'Lapangan:',
+                'date_time': 'Tanggal & Waktu:',
+                'invoice_duration': 'Durasi:',
+                'total_payment': 'Total Pembayaran:',
+                'important_info': 'Informasi Penting: Booking akan dikonfirmasi dalam 1x24 jam melalui WhatsApp.',
+                'confirm_whatsapp': 'Konfirmasi via WhatsApp',
+                'print_invoice': 'Cetak Invoice',
+                'book_again': 'Booking Lagi',
+                
+                // History
+                'history_title': 'Riwayat Booking',
+                'history_subtitle': 'Lihat semua booking yang pernah Anda lakukan',
+                'filter_status': 'Filter Status',
+                'all': 'Semua',
+                'pending': 'Pending',
+                'confirmed': 'Dikonfirmasi',
+                'completed': 'Selesai',
+                'cancelled': 'Dibatalkan',
+                'reset_data': 'Reset Data',
+                'no_history': 'Belum ada riwayat booking',
+                'no_history_desc': 'Mulai booking lapangan pertama Anda!',
+                'book_now_btn': 'Booking Sekarang',
+                'load_more': 'Load More',
+                
+                // Team
+                'team_title': 'Tim Kami',
+                'team_subtitle': 'Orang-orang di balik kesuksesan Courtify',
+                
+                // Footer
+                'navigation': 'Navigasi',
+                'contact': 'Kontak',
+                'operational_hours': 'Jam Operasional',
+                'every_day': 'Setiap hari : 06.00 - 24.00',
+                'copyright': 'Hak Cipta Dilindungi',
+                'privacy_policy': 'Privacy Policy',
+                'terms_service': 'Terms of Service',
+                
+                // Court Descriptions
+                'badminton_desc': 'Lapangan standar internasional dengan lighting professional. Permukaan kayu maple berkualitas tinggi.',
+                'futsal_desc': 'Rumput sintetis premium dengan safety mat berkualitas. Sistem drainase yang baik.',
+                'basket_desc': 'Lapangan indoor dengan floor khusus dan ring profesional. Pencahayaan LED yang optimal.',
+                'padel_desc': 'Lapangan standar internasional dengan dinding kaca premium. Pencahayaan yang merata.',
+                
+                // Court Features
+                'wifi': 'WiFi',
+                'parking': 'Parkir',
+                'ac': 'AC',
+                'sound_system': 'Sound System',
+                'canteen': 'Kantin',
+                'shower': 'Shower',
+                'scoreboard': 'Scoreboard',
+                'ventilation': 'Ventilasi'
+            },
+            en: {
+                // Navbar
+                'home': 'Home',
+                'courts': 'Courts',
+                'history': 'History',
+                'team': 'Team',
+                
+                // Landing Page
+                'hero_title': 'Courtify',
+                'hero_subtitle': 'Premium sports court booking with the best experience. Badminton, Futsal, Basketball, Padel - all in one platform.',
+                'explore_courts': 'Explore Courts',
+                'book_now': 'Book Now',
+                'activities': 'Activities',
+                'completed_bookings': 'Completed Bookings',
+                'court_types': 'Court Types',
+                'customer_satisfaction': 'Customer Satisfaction',
+                'success_rate': 'Success Rate',
+                'why_choose': 'Why Choose Courtify?',
+                'instant_booking': 'Instant Booking',
+                'instant_desc': 'Booking process in just 3 steps with real-time confirmation.',
+                'secure_payment': 'Secure Payment',
+                'secure_desc': 'Encrypted payment system with various payment methods.',
+                'support_24': '24/7 Support',
+                'support_desc': 'Support team ready to help anytime via WhatsApp and email.',
+                
+                // Court Selection
+                'choose_court': 'Choose Your Favorite Court',
+                'court_subtitle': 'All courts available with premium facilities and best prices',
+                'available': 'Available',
+                'almost_full': 'Almost Full',
+                'select_court': 'Select Court',
+                'per_hour': '/ hour',
+                
+                // Booking Form
+                'booking_title': 'Book a Court',
+                'booking_subtitle': 'Fill your booking data completely for the best experience',
+                'full_name': 'Full Name',
+                'whatsapp': 'WhatsApp Number',
+                'email': 'Email Address',
+                'booking_date': 'Booking Date',
+                'choose_field': 'Choose Court',
+                'duration': 'Booking Duration',
+                'choose_time': 'Choose Start Time',
+                'available_slot': 'Available',
+                'booked_slot': 'Booked',
+                'unavailable_slot': 'Unavailable',
+                'additional_message': 'Additional Message (Optional)',
+                'field_cost': 'Court Cost:',
+                'duration_text': 'Duration:',
+                'peak_hour': 'Peak Hour Surcharge:',
+                'total': 'Total:',
+                'proceed_payment': 'Proceed to Payment',
+                
+                // Payment Methods
+                'payment_method': 'Payment Method',
+                'upload_receipt': 'Upload Transfer Receipt',
+                'choose_payment': 'Choose Payment Method',
+                'bank_transfer': 'Bank Transfer',
+                'e_wallet': 'E-Wallet',
+                'virtual_account': 'Virtual Account',
+                'choose_file': 'Choose File',
+                'no_file_chosen': 'No file chosen',
+                'upload_note': 'Format: JPG, PNG, PDF (Max. 5MB)',
+                'payment_instructions': 'Payment Instructions:',
+                
+                // Invoice
+                'invoice_title': 'Booking Invoice',
+                'invoice_subtitle': 'Review and confirm your booking',
+                'invoice_date': 'Date:',
+                'booking_code': 'Booking Code:',
+                'booker_name': 'Booker Name:',
+                'field': 'Court:',
+                'date_time': 'Date & Time:',
+                'invoice_duration': 'Duration:',
+                'total_payment': 'Total Payment:',
+                'important_info': 'Important Information: Booking will be confirmed within 24 hours via WhatsApp.',
+                'confirm_whatsapp': 'Confirm via WhatsApp',
+                'print_invoice': 'Print Invoice',
+                'book_again': 'Book Again',
+                
+                // History
+                'history_title': 'Booking History',
+                'history_subtitle': 'View all bookings you have made',
+                'filter_status': 'Filter Status',
+                'all': 'All',
+                'pending': 'Pending',
+                'confirmed': 'Confirmed',
+                'completed': 'Completed',
+                'cancelled': 'Cancelled',
+                'reset_data': 'Reset Data',
+                'no_history': 'No booking history yet',
+                'no_history_desc': 'Start your first court booking!',
+                'book_now_btn': 'Book Now',
+                'load_more': 'Load More',
+                
+                // Team
+                'team_title': 'Our Team',
+                'team_subtitle': 'The people behind Courtify\'s success',
+                
+                // Footer
+                'navigation': 'Navigation',
+                'contact': 'Contact',
+                'operational_hours': 'Operational Hours',
+                'every_day': 'Every day : 06.00 - 24.00',
+                'copyright': 'All Rights Reserved',
+                'privacy_policy': 'Privacy Policy',
+                'terms_service': 'Terms of Service',
+                
+                // Court Descriptions
+                'badminton_desc': 'International standard court with professional lighting. High-quality maple wood surface.',
+                'futsal_desc': 'Premium synthetic turf with quality safety mat. Good drainage system.',
+                'basket_desc': 'Indoor court with special flooring and professional hoops. Optimal LED lighting.',
+                'padel_desc': 'International standard court with premium glass walls. Even lighting.',
+                
+                // Court Features
+                'wifi': 'WiFi',
+                'parking': 'Parking',
+                'ac': 'AC',
+                'sound_system': 'Sound System',
+                'canteen': 'Canteen',
+                'shower': 'Shower',
+                'scoreboard': 'Scoreboard',
+                'ventilation': 'Ventilation'
+            }
+        };
+
+    // Current language
+   
+
+    // Function to set language
+    // Di dalam script, ganti fungsi setLanguage() dengan ini:
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('courtify_lang', lang);
+        applyTranslations();
+        
+        // Update dropdown text
+        const dropdownToggle = document.querySelector('#languageDropdown');
+        const icon = dropdownToggle.querySelector('i').cloneNode(true);
+        dropdownToggle.innerHTML = '';
+        dropdownToggle.appendChild(icon);
+        dropdownToggle.appendChild(document.createTextNode(lang === 'id' ? ' Bahasa' : ' Language'));
+
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+                if (item.textContent.includes('🇮🇩')) {
+                    item.textContent = lang === 'id' ? '✅ 🇮🇩 Indonesia' : '🇮🇩 Indonesia';
+                }
+                if (item.textContent.includes('🇬🇧')) {
+                    item.textContent = lang === 'en' ? '✅ 🇬🇧 English' : '🇬🇧 English';
+                }
+            });
+            
+            showToast(lang === 'id' ? 'Bahasa diubah ke Indonesia' : 'Language changed to English', 'success');
+        }
+
+    // Perbaiki fungsi applyTranslations() untuk menerjemahkan lebih banyak elemen:
+    function applyTranslations() {
+        const langData = translations[currentLang];
+        
+        // Update semua elemen dengan data-translate
+        document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+        document.querySelectorAll('[data-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-placeholder');
+                if (langData[key]) {
+                    element.placeholder = langData[key];
+                }
+            });
+
+        document.title = currentLang === 'id' ? 'Courtify - Premium Sports Court Booking' : 'Courtify - Premium Sports Court Booking';
+            
+            // 4. Update teks statis
+            updateStaticTexts(langData);
+        }
+
+    // Tambahkan fungsi baru untuk update teks statis:
+    function updateStaticTexts(langData) {
+        // Hero section
+        const heroTitle = document.querySelector('.hero-title');
+        const heroSubtitle = document.querySelector('.hero-subtitle');
+        if (heroTitle && langData.hero_title) heroTitle.textContent = langData.hero_title;
+        if (heroSubtitle && langData.hero_subtitle) heroSubtitle.textContent = langData.hero_subtitle;
+        
+        // Section headers
+            const headers = document.querySelectorAll('h1, h2, h3, h4, h5');
+            headers.forEach(header => {
+                const text = header.textContent.trim();
+                Object.keys(langData).forEach(key => {
+                    // Cek apakah teks header cocok dengan terjemahan Indonesia
+                    if (translations.id[key] === text) {
+                        header.textContent = langData[key];
+                    }
+                });
+            });
+            
+            // Card titles and descriptions
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title');
+                const text = card.querySelector('.card-text');
+                const button = card.querySelector('.btn');
+                
+                if (title) {
+                    const titleText = title.textContent.trim();
+                    Object.keys(langData).forEach(key => {
+                        if (translations.id[key] === titleText) {
+                            title.textContent = langData[key];
+                        }
+                    });
+                }
+                
+                if (text) {
+                    const textContent = text.textContent.trim();
+                    Object.keys(langData).forEach(key => {
+                        if (translations.id[key] === textContent) {
+                            text.textContent = langData[key];
+                        }
+                    });
+                }
+                
+                if (button) {
+                    const buttonText = button.textContent.trim();
+                    Object.keys(langData).forEach(key => {
+                        if (translations.id[key] === buttonText) {
+                            button.textContent = langData[key];
+                        }
+                    });
+                }
+            });
+            
+            // Badges
+            const badges = document.querySelectorAll('.badge, .feature-badge');
+            badges.forEach(badge => {
+                const badgeText = badge.textContent.trim();
+                Object.keys(langData).forEach(key => {
+                    if (translations.id[key] === badgeText) {
+                        badge.textContent = langData[key];
+                    }
+                });
+            });
+            
+            // Footer
+            const footerLinks = document.querySelectorAll('.footer-links a');
+            footerLinks.forEach(link => {
+                const linkText = link.textContent.trim();
+                Object.keys(langData).forEach(key => {
+                    if (translations.id[key] === linkText) {
+                        link.textContent = langData[key];
+                    }
+                });
+            });
+            
+            // Invoice items
+            const invoiceItems = document.querySelectorAll('.invoice-item span:first-child');
+            invoiceItems.forEach(item => {
+                const itemText = item.textContent.trim();
+                Object.keys(langData).forEach(key => {
+                    if (translations.id[key] === itemText.replace(':', '').trim()) {
+                        item.textContent = langData[key] + ':';
+                    }
+                });
+            });
+            
+            // Time slot legend
+            const legendItems = document.querySelectorAll('.text-muted.text-readable span');
+            if (legendItems.length >= 3) {
+                if (langData.available_slot) legendItems[0].textContent = langData.available_slot;
+                if (langData.booked_slot) legendItems[2].textContent = langData.booked_slot;
+                if (langData.unavailable_slot) legendItems[4].textContent = langData.unavailable_slot;
+            }
+        }
+        
+    // Tambahkan kode untuk inisialisasi dropdown bahasa saat load:
+    // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('courtify_lang') || 'id';
+    currentLang = savedLang;
+    applyTranslations();
+
+    const dropdownToggle = document.querySelector('#languageDropdown');
+    if (dropdownToggle) {
+        const icon = dropdownToggle.querySelector('i').cloneNode(true);
+        dropdownToggle.innerHTML = '';
+        dropdownToggle.appendChild(icon);
+        dropdownToggle.appendChild(document.createTextNode(currentLang === 'id' ? ' Bahasa' : ' Language'));
+    }
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        if (item.textContent.includes('🇮🇩')) {
+            item.textContent = currentLang === 'id' ? '✅ 🇮🇩 Indonesia' : '🇮🇩 Indonesia';
+        }
+        if (item.textContent.includes('🇬🇧')) {
+            item.textContent = currentLang === 'en' ? '✅ 🇬🇧 English' : '🇬🇧 English';
+        }
+    });
+
+    // ✅ TUNDA sedikit agar DOM siap
+        loadState();
+        initApp(); // initApp akan panggil showPage(currentState.currentPage)
+        
+        loadFromStorage();
+        updateStats();
+        applyTranslations();
+        
+        console.log('App initialized. Current page:', currentState.currentPage);
+    });
+
+            const confirmModal = document.getElementById('simpleConfirmModal');
+            if (confirmModal) {
+                confirmModal.addEventListener('hidden.bs.modal', function () {
+                    bookingToConfirm = null;
+                    bookingDataGlobal = {};
+                });
+            }
+    
+    // Handle modal shown
+    const adminLoginModal = document.getElementById('adminLoginModal');
+    if (adminLoginModal) {
+        adminLoginModal.addEventListener('shown.bs.modal', function () {
+            document.getElementById('adminPassword').focus();
+        });
+    }
+    
+    // Handle enter key di password admin
+    document.getElementById('adminPassword')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loginAdmin();
+        }
+    });
+
+            // State Management
+            let currentState = {
+                selectedCourt: null,
+                selectedSlot: null,
+                bookingData: null,
+                currentPage: 'landing',
+                historyPage: 1,
+                filterStatus: 'all',
+                historyItems: 5 // Default items per page
+            };
+
+            // GANTI fungsi saveState() di dalam showPage() dengan yang ini di bagian atas:
+                function saveState() {
+                    localStorage.setItem('courtify_currentPage', currentState.currentPage);
+                    localStorage.setItem('courtify_fullState', JSON.stringify(currentState));
+                    localStorage.setItem('courtifyState', JSON.stringify(currentState)); // Untuk kompatibilitas
+                }
+
+
+
+            // Fungsi sederhana untuk animasi navbar
+    function animateNavbar() {
+        const navbar = document.getElementById('mainNavbar');
+        
+        // Tambah class bounce
+        navbar.classList.add('navbar-bounce');
+        
+        // Hapus class setelah animasi selesai
+        setTimeout(() => {
+            navbar.classList.remove('navbar-bounce');
+        }, 600);
+    }
+
+    // GANTI fungsi initApp() dengan yang ini:
+    function initApp() {
+    console.log('initApp called');
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    const tanggalInput = document.getElementById('tanggal'); // 🔥 DIDEFINISIKAN DI SINI
+    if (tanggalInput) {
+        tanggalInput.min = today;
+        tanggalInput.value = today;
+    }
+    
+    // Initialize slots
+    loadSlots();
+    
+    // Email validation
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('input', validateEmail);
+    }
+    
+    // Set invoice date
+    const invoiceDate = document.getElementById('invoice-date');
+    if (invoiceDate) {
+        invoiceDate.textContent = formatDate(new Date());
+    }
+    
+    // Tampilkan halaman berdasarkan currentState
+    console.log('Trying to show page:', currentState.currentPage);
+    
+    // Tunggu sedikit agar DOM benar-benar siap
+    setTimeout(() => {
+        showPage(currentState.currentPage);
+        
+        // Sembunyikan loader setelah halaman ditampilkan
+        setTimeout(() => {
+            const loader = document.getElementById('initialLoader');
+            if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(() => {
+                    loader.remove();
+                }, 500);
+            }
+        }, 300);
+    }, 100);
+}
+    // Fungsi untuk update navigasi aktif
+    // Fungsi untuk update navigasi aktif (tambahkan parameter)
+    function updateNavActiveState(pageId) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Set active nav based on page
+        if (pageId === 'landing') {
+            const navLink = document.querySelector('.nav-link[onclick*="landing"]');
+            if (navLink) navLink.classList.add('active');
+        } else if (pageId === 'daftar') {
+            const navLink = document.querySelector('.nav-link[onclick*="daftar"]');
+            if (navLink) navLink.classList.add('active');
+        } else if (pageId === 'history') {
+            const navLink = document.querySelector('.nav-link[onclick*="history"]');
+            if (navLink) navLink.classList.add('active');
+        } else if (pageId === 'team') {
+            const navLink = document.querySelector('.nav-link[onclick*="team"]');
+            if (navLink) navLink.classList.add('active');
+        } else if (pageId === 'booking' || pageId === 'invoice') {
+            // Untuk booking dan invoice, aktifkan menu daftar
+            const navLink = document.querySelector('.nav-link[onclick*="daftar"]');
+            if (navLink) navLink.classList.add('active');
+        }
+    }
+
+                // ===== FUNGSI ANIMASI NAVBAR =====
+
+    // Fungsi untuk animasi bounce navbar
+    function animateNavbar() {
+        const navbar = document.getElementById('mainNavbar');
+        
+        // Tambah class bounce
+        navbar.classList.add('navbar-bounce');
+        
+        // Hapus class setelah animasi selesai
+        setTimeout(() => {
+            navbar.classList.remove('navbar-bounce');
+        }, 600);
+        
+        // Auto close navbar di mobile
+        if (window.innerWidth <= 992) {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.getElementById('navbarNav');
+            
+            if (navbarCollapse.classList.contains('show')) {
+                navbarToggler.click();
+            }
+        }
+    }
+
+    // Fungsi untuk animasi slide navbar
+    function slideNavbar(direction = 'down') {
+        const navbar = document.getElementById('mainNavbar');
+        
+        if (direction === 'down') {
+            navbar.classList.remove('navbar-slide-up');
+            navbar.classList.add('navbar-slide-down');
+        } else {
+            navbar.classList.remove('navbar-slide-down');
+            navbar.classList.add('navbar-slide-up');
+            
+            setTimeout(() => {
+                navbar.classList.remove('navbar-slide-up');
+            }, 500);
+        }
+    }
+
+    // Fungsi untuk efek pulse pada navbar
+    function pulseNavbar() {
+        const navbar = document.getElementById('mainNavbar');
+        
+        navbar.classList.add('navbar-pulse');
+        
+        setTimeout(() => {
+            navbar.classList.remove('navbar-pulse');
+        }, 1000);
+    }
+
+    // Efek scroll pada navbar
+    let lastScrollTop = 0;
+    const navbar = document.getElementById('mainNavbar');
+
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            // Scroll down - hide navbar
+            navbar.style.transform = 'translateY(-100%)';
+            navbar.style.transition = 'transform 0.3s ease';
+        } else {
+            // Scroll up - show navbar
+            navbar.style.transform = 'translateY(0)';
+            
+            // Tambah efek saat di atas
+            if (scrollTop > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+
+    // Tambah event listener untuk semua nav link
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Animasi ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    transform: scale(0);
+                    animation: ripple-animation 0.6s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    top: ${y}px;
+                    left: ${x}px;
+                `;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            // Hover effect dengan delay
+            link.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+        
+        // Brand click animation
+        const brand = document.querySelector('.navbar-brand');
+        brand.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Rotate animation
+            this.style.transform = 'rotate(-10deg)';
+            
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 300);
+            
+            showPage('landing');
+            animateNavbar();
+        });
+        
+        // Hamburger menu animation
+        const toggler = document.querySelector('.navbar-toggler');
+        toggler.addEventListener('click', function() {
+            // Rotate animation
+            this.classList.toggle('active');
+            
+            if (this.classList.contains('active')) {
+                this.style.transform = 'rotate(180deg)';
+            } else {
+                this.style.transform = 'rotate(0)';
+            }
+            
+            // Pulse effect
+            pulseNavbar();
+        });
+    });
+
+
+
+    // Tambah CSS untuk ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+
+
+
+
+        // GANTI fungsi showPage() dengan yang ini:
+            function showPage(pageId) {
+    console.log('showPage called with:', pageId);
+
+    if (!document.getElementById(pageId)) {
+        pageId = 'landing';
+    }
+
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+        page.style.display = 'none';
+        page.style.opacity = '0';
+        page.style.transform = 'translateY(0)';
+    });
+
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+        targetPage.offsetHeight;
+        setTimeout(() => {
+            targetPage.classList.add('active');
+            targetPage.style.opacity = '1';
+            targetPage.style.transform = 'translateY(0)';
+        }, 10);
+    }
+
+    currentState.currentPage = pageId;
+
+    // 🔥 RESET FORM jika user membuka halaman booking secara manual (bukan dari proses internal)
+    if (pageId === 'booking') {
+        // Hanya reset jika tidak sedang dalam proses lanjutan (misal: tidak ada selectedCourt yang valid)
+        if (!currentState.selectedCourt && !currentState.selectedSlot) {
+            resetBookingForm();
+            // Kosongkan juga data booking sebelumnya
+            currentState.bookingData = null;
+        }
+    }
+
+    updateNavActiveState(pageId);
+
+    if (pageId === 'history') {
+        setTimeout(() => loadHistory(), 500);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    saveState();
+    document.body.classList.add('page-ready');
+}
+
+                // Fungsi yang lebih baik untuk saveState
+                function saveState() {
+                    localStorage.setItem('courtify_currentPage', currentState.currentPage);
+                    localStorage.setItem('courtify_fullState', JSON.stringify(currentState));
+                }
+function loadState() {
+    console.log('loadState called');
+    
+    // Coba ambil halaman terakhir
+    const savedPage = localStorage.getItem('courtify_currentPage');
+    
+    // Izinkan invoice jika ada data sementara
+    const allowedPages = ['landing', 'daftar', 'history', 'team'];
+    let canRestoreInvoice = false;
+    
+    if (savedPage === 'invoice') {
+        const tempData = localStorage.getItem('tempInvoiceData');
+        if (tempData) {
+            try {
+                currentState.bookingData = JSON.parse(tempData);
+                canRestoreInvoice = true;
+            } catch (e) {
+                console.error('Failed to parse temp invoice data:', e);
+            }
+        }
+    }
+
+    if ((savedPage && allowedPages.includes(savedPage) && document.getElementById(savedPage)) || canRestoreInvoice) {
+        currentState.currentPage = savedPage;
+        console.log('Restored page:', savedPage);
+    } else {
+        currentState.currentPage = 'landing';
+        console.log('Fallback to landing');
+    }
+
+    // Muat state penuh
+    const fullState = localStorage.getItem('courtify_fullState');
+    if (fullState) {
+        try {
+            const parsed = JSON.parse(fullState);
+            for (let key in parsed) {
+                if (parsed[key] !== null && parsed[key] !== undefined) {
+                    currentState[key] = parsed[key];
+                }
+            }
+        } catch (e) {
+            console.error('Failed to parse full state:', e);
+        }
+    }
+}
+            function selectCourt(courtType) {
+                const selectElement = document.getElementById('lapangan');
+                selectElement.value = courtType;
+                currentState.selectedCourt = courtType;
+
+                // 🔥 SET TANGGAL KE HARI INI SECARA OTOMATIS
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('tanggal').value = today;
+                loadSlots(); // Refresh slot berdasarkan hari ini
+
+                updatePrice();
+                showPage('booking');
+                showToast('Lapangan berhasil dipilih!', 'success');
+            }
+
+            function updatePrice() {
+                const select = document.getElementById('lapangan');
+                const price = select.options[select.selectedIndex]?.dataset.price || 0;
+                const duration = document.getElementById('durasi').value;
+                
+                // Update display
+                document.getElementById('biaya-lapangan').textContent = formatCurrency(price);
+                document.getElementById('durasi-text').textContent = `${duration} menit`;
+                
+                // Calculate total
+                calculateTotal();
+            }
+
+            function calculateTotal() {
+                const select = document.getElementById('lapangan');
+                const price = parseInt(select.options[select.selectedIndex]?.dataset.price || 0);
+                const duration = parseInt(document.getElementById('durasi').value);
+                const selectedSlot = currentState.selectedSlot;
+                
+                let total = (price * duration) / 60;
+                
+                // Peak hour surcharge (18:00 - 22:00)
+                if (selectedSlot) {
+                    const hour = parseInt(selectedSlot.split(':')[0]);
+                    if (hour >= 18 && hour < 22) {
+                        const peakSurcharge = total * 0.2; // 20% surcharge
+                        total += peakSurcharge;
+                        document.getElementById('peak-hour').textContent = formatCurrency(peakSurcharge);
+                    } else {
+                        document.getElementById('peak-hour').textContent = 'Rp 0';
+                    }
+                }
+                
+                // Update total
+                document.getElementById('total-harga').textContent = formatCurrency(total);
+            }
+
+            function loadSlots() {
+                const date = document.getElementById('tanggal').value;
+                const slotsContainer = document.getElementById('slots');
+                slotsContainer.innerHTML = '';
+                
+                // Generate time slots from 08:00 to 24:00
+                for (let hour = 6; hour <= 24; hour++) {
+                    const slot = document.createElement('div');
+                    const time = `${hour.toString().padStart(2, '0')}:00`;
+                    
+                    // Check if slot is booked
+                    const isBooked = checkIfBooked(date, time);
+                    const isPast = checkIfPast(date, time);
+                    
+                    if (isPast) {
+                        slot.className = 'slot unavailable';
+                        slot.textContent = time;
+                        slot.title = 'Waktu telah lewat';
+                    } else if (isBooked) {
+                        slot.className = 'slot booked';
+                        slot.textContent = time;
+                        slot.title = 'Sudah dibooking';
+                    } else {
+                        slot.className = 'slot available';
+                        slot.textContent = time;
+                        slot.onclick = () => selectTimeSlot(slot, time);
+                        slot.title = 'Tersedia untuk booking';
+                    }
+                    
+                    slotsContainer.appendChild(slot);
+                }
+            }
+
+            function selectTimeSlot(element, time) {
+                // Remove selected class from all slots
+                document.querySelectorAll('.slot').forEach(s => {
+                    s.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked slot
+                element.classList.add('selected');
+                currentState.selectedSlot = time;
+                
+                // Recalculate total with peak hour check
+                calculateTotal();
+                
+                showToast(`Jam ${time} dipilih`, 'info');
+            }
+
+            function checkIfBooked(date, time) {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                return bookings.some(booking => 
+                    booking.date === date && 
+                    booking.time === time &&
+                    booking.status !== 'cancelled'
+                );
+            }
+
+            function checkIfPast(date, time) {
+                const now = new Date();
+                const bookingDate = new Date(`${date}T${time}`);
+                return bookingDate < now;
+            }
+
+            function validateEmail() {
+                const email = document.getElementById('email').value;
+                const isValid = email.endsWith('@gmail.com');
+                const errorElement = document.getElementById('email-error');
+                
+                if (email && !isValid) {
+                    errorElement.style.display = 'block';
+                    return false;
+                } else {
+                    errorElement.style.display = 'none';
+                    return true;
+                }
+            }
+
+            function processBooking() {
+    const nama = document.getElementById('nama').value.trim();
+    const wa = document.getElementById('wa').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const tanggal = document.getElementById('tanggal').value;
+    const lapangan = document.getElementById('lapangan').value;
+    const durasi = document.getElementById('durasi').value;
+    const pesan = document.getElementById('pesan').value.trim();
+    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+    const paymentProofInput = document.getElementById('paymentProof');
+
+    if (!nama || !wa || !email || !tanggal || !lapangan || !durasi || !currentState.selectedSlot) {
+        showToast('Harap lengkapi semua data!', 'error');
+        return;
+    }
+    if (!validateEmail()) {
+        showToast('Email harus @gmail.com', 'error');
+        return;
+    }
+    if (!paymentMethodElement) {
+        showToast('Harap pilih metode pembayaran!', 'error');
+        return;
+    }
+    if (!paymentProofInput.files[0]) {
+        showToast('Harap upload bukti transfer!', 'error');
+        return;
+    }
+
+    const paymentMethod = paymentMethodElement.value;
+    const file = paymentProofInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const bookingData = {
+            id: generateBookingId(),
+            nama,
+            wa,
+            email,
+            tanggal,
+            lapangan,
+            durasi,
+            waktu: currentState.selectedSlot,
+            pesan,
+            paymentMethod: getPaymentMethodText(paymentMethod),
+            paymentMethodCode: paymentMethod,
+            paymentProof: e.target.result,
+            fileName: file.name,
+            fileSize: file.size,
+            total: parseInt(document.getElementById('total-harga').textContent.replace(/\D/g, '')),
+            status: 'pending',
+            createdAt: new Date().toISOString()
+        };
+
+        // 🔥 SIMPAN KE LOCALSTORAGE AGAR BISA DIPULIHKAN SAAT REFRESH
+        localStorage.setItem('tempInvoiceData', JSON.stringify(bookingData));
+
+        currentState.bookingData = bookingData;
+        updateInvoice(bookingData);
+        showPage('invoice');
+        showToast('Booking berhasil diproses!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+            function updateInvoice(bookingData) {
+                    document.getElementById('invoice-number').textContent = bookingData.id;
+                    document.getElementById('invoice-nama').textContent = bookingData.nama;
+                    document.getElementById('invoice-lapangan').textContent = getCourtName(bookingData.lapangan);
+                    document.getElementById('invoice-waktu').textContent = `${bookingData.tanggal} ${bookingData.waktu}`;
+                    document.getElementById('invoice-durasi').textContent = `${bookingData.durasi} menit`;
+                    document.getElementById('invoice-total').textContent = formatCurrency(bookingData.total);
+                    document.getElementById('booking-code').textContent = bookingData.id;
+                    
+                    // Tambahkan informasi pembayaran di invoice
+                    const invoiceDetails = document.querySelector('.invoice-details');
+                    const paymentInfo = document.createElement('div');
+                    paymentInfo.className = 'invoice-item';
+                    paymentInfo.innerHTML = `
+                        <span>Metode Pembayaran:</span>
+                        <span class="badge badge-info">${bookingData.paymentMethod}</span>
+                    `;
+                    
+                    // Cari posisi untuk memasukkan info pembayaran (setelah durasi)
+                    const durationItem = document.querySelector('.invoice-item:nth-child(4)');
+                    if (durationItem) {
+                        durationItem.insertAdjacentElement('afterend', paymentInfo);
+                    }
+                }
+
+            function confirmBooking() {
+                if (!currentState.bookingData) {
+                    showToast('Data booking tidak ditemukan!', 'error');
+                    return;
+                }
+                
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                bookings.push(currentState.bookingData);
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                updateStats();
+                
+                
+                // Prepare WhatsApp message dengan detail pembayaran
+                const message = `Halo Admin Courtify!%0A%0A` +
+                                `Saya ingin mengonfirmasi booking dengan detail sebagai berikut:%0A%0A` +
+                                `*KODE BOOKING*: ${currentState.bookingData.id}%0A` +
+                                `*NAMA*: ${currentState.bookingData.nama}%0A` +
+                                `*WHATSAPP*: ${currentState.bookingData.wa}%0A` +
+                                `*EMAIL*: ${currentState.bookingData.email}%0A` +
+                                `*LAPANGAN*: ${getCourtName(currentState.bookingData.lapangan)}%0A` +
+                                `*TANGGAL*: ${currentState.bookingData.tanggal}%0A` +
+                                `*WAKTU*: ${currentState.bookingData.waktu}%0A` +
+                                `*DURASI*: ${currentState.bookingData.durasi} menit%0A` +
+                                `*TOTAL*: ${formatCurrency(currentState.bookingData.total)}%0A%0A` +
+                                `*METODE PEMBAYARAN*%0A` +
+                                `• Metode: ${currentState.bookingData.paymentMethod}%0A` +
+                                `• Bukti TF: ${currentState.bookingData.fileName} (${(currentState.bookingData.fileSize/1024).toFixed(1)} KB)%0A%0A` +
+                                `${currentState.bookingData.pesan ? `💬 *PESAN TAMBAHAN*%0A${currentState.bookingData.pesan}%0A%0A` : ''}` +
+                                `Silakan verifikasi pembayaran dan konfirmasi booking saya. Terima kasih!`;
+                
+                const phoneNumber = '62881023570416';
+                window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+                
+                showToast('Booking berhasil dikirim ke WhatsApp!', 'success');
+                
+                resetBookingForm();
+                showPage('landing');
+                localStorage.removeItem('tempInvoiceData');
+            }
+
+            function loadHistory() {
+                const historyList = document.getElementById('historyList');
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                
+                if (bookings.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-4x mb-3" style="color: var(--accent); opacity: 0.5;"></i>
+                            <h4 class="text-readable" data-translate="no_history">Belum ada riwayat booking</h4>
+                            <p class="text-muted text-readable" data-translate="no_history_desc">Mulai booking lapangan pertama Anda!</p>
+                            <button class="btn btn-warning mt-3" onclick="showPage('daftar')">
+                                <i class="fas fa-calendar-plus me-2"></i> <span data-translate="book_now_btn">Booking Sekarang</span>
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let filteredBookings = bookings;
+                if (currentState.filterStatus !== 'all') {
+                    filteredBookings = bookings.filter(b => b.status === currentState.filterStatus);
+                }
+                
+                const startIndex = 0;
+                const endIndex = Math.min(currentState.historyItems, filteredBookings.length);
+                const pageBookings = filteredBookings.slice(startIndex, endIndex);
+                
+                historyList.innerHTML = '';
+                
+                pageBookings.forEach(booking => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge ${getStatusBadgeClass(booking.status)} me-2">
+                                        ${getStatusText(booking.status)}
+                                    </span>
+                                    <span class="text-muted small">${booking.id}</span>
+                                </div>
+                                <h5 class="mb-2 text-readable">${getCourtName(booking.lapangan)}</h5>
+                                <p class="mb-2 text-readable"><i class="fas fa-user me-2"></i>${booking.nama}</p>
+                                <div class="d-flex flex-wrap gap-3 text-readable">
+                                    <small><i class="far fa-calendar me-1"></i>${booking.tanggal}</small>
+                                    <small><i class="far fa-clock me-1"></i>${booking.waktu} (${booking.durasi} menit)</small>
+                                    <small><i class="fas fa-phone me-1"></i>${booking.wa}</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fs-4 fw-bold" style="color: var(--accent);">
+                                    ${formatCurrency(booking.total)}
+                                </div>
+                                <button class="btn btn-sm btn-outline-light mt-2" onclick="viewBookingHistoryDetail('${booking.id}')">
+                                    <i class="fas fa-eye me-1"></i> Detail
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+                
+                const loadMoreBtn = document.getElementById('load-more-btn');
+                if (endIndex < filteredBookings.length) {
+                    loadMoreBtn.style.display = 'inline-block';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            }
+
+            function loadMoreHistory() {
+                currentState.historyItems += 5;
+                loadHistory();
+            }
+
+            function filterHistory(status) {
+                currentState.filterStatus = status;
+                currentState.historyItems = 5;
+                loadHistory();
+            }
+
+            function resetHistory() {
+                if (confirm('Apakah Anda yakin ingin mereset semua data booking?')) {
+                    localStorage.removeItem('bookings');
+                    currentState.historyItems = 5;
+                    loadHistory();
+                    updateStats();
+                    showToast('Data booking telah direset', 'info');
+                }
+            }
+
+
+            function resetBookingForm() {
+                document.getElementById('bookingForm').reset();
+                document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+                document.getElementById('fileName').innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
+                document.getElementById('previewContainer').classList.add('d-none');
+                currentState.selectedSlot = null;
+                
+                // Reset payment method ke default (Transfer Bank)
+                    document.getElementById('bankTransfer').checked = true;
+                    document.querySelectorAll('.payment-instruction').forEach(div => div.classList.add('d-none'));
+                    document.getElementById('bankInstructions').classList.remove('d-none');
+                
+                loadSlots();
+                updatePrice();
+            }
+
+            // Fungsi untuk generate QR code (memerlukan library QRCode.js)
+            function showQRCodePayment(paymentData) {
+                // Contoh untuk Virtual Account
+                const qrData = {
+                    bank: 'BCA',
+                    vaNumber: '888880123456789',
+                    amount: paymentData.total,
+                    merchant: 'Courtify'
+                };
+                
+                // Tampilkan QR code di modal atau di halaman invoice
+                showToast('QR Code tersedia untuk pembayaran via e-wallet', 'info');
+            }
+
+            function printInvoice() {
+                window.print();
+            }
+
+            function updateStats() {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                const completedBookings = bookings.filter(b => b.status === 'completed').length;
+                
+                document.getElementById('total-bookings').textContent = bookings.length;
+                document.getElementById('booking-success').textContent = 
+                    bookings.length > 0 ? Math.round((completedBookings / bookings.length) * 100) + '%' : '0%';
+            }
+
+            // Utility Functions
+            function formatCurrency(amount) {
+                return 'Rp ' + amount.toLocaleString('id-ID');
+            }
+
+            function formatDate(date) {
+                return date.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            function generateBookingId() {
+                return 'CTF-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            }
+
+            function getCourtName(courtType) {
+                const courts = {
+                    'badminton': 'Badminton Court',
+                    'futsal': 'Futsal Field',
+                    'basket': 'Basketball Court',
+                    'padel': 'Padel Tennis Court'
+                };
+                return courts[courtType] || 'Unknown Court';
+            }
+
+            function getStatusBadgeClass(status) {
+                const classes = {
+                    'pending': 'badge-warning',
+                    'confirmed': 'badge-info',
+                    'completed': 'badge-success',
+                    'cancelled': 'badge-danger'
+                };
+                return classes[status] || 'badge-secondary';
+            }
+
+            function getStatusText(status) {
+                const texts = {
+                    'pending': 'Menunggu',
+                    'confirmed': 'Dikonfirmasi',
+                    'completed': 'Selesai',
+                    'cancelled': 'Dibatalkan'
+                };
+                return texts[status] || 'Unknown';
+            }
+
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} 
+                        me-3" style="color: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent)'}"></i>
+                        <div class="text-readable">${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(20px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+
+            function saveToStorage() {
+                localStorage.setItem('courtifyState', JSON.stringify(currentState));
+            }
+
+            // GANTI fungsi loadFromStorage() dengan yang ini:
+            function loadFromStorage() {
+                // Fungsi ini hanya untuk load data lain, bukan untuk set halaman
+                const saved = localStorage.getItem('courtifyState');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        // Gabungkan dengan currentState tapi jangan overwrite currentPage
+                        currentState = {
+                            ...parsed,
+                            currentPage: currentState.currentPage // Jaga currentPage dari loadState
+                        };
+                    } catch (e) {
+                        console.error('Error loading from storage:', e);
+                    }
+                }
+            }
+
+            // Fungsi untuk melihat detail booking di history (PERBAIKI NAMA FUNGSI)
+function viewBookingHistoryDetail(bookingId) {
+    console.log('viewBookingHistoryDetail called with ID:', bookingId); // Debug
+    
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    console.log('Total bookings:', bookings.length); // Debug
+    
+    const booking = bookings.find(b => b.id === bookingId);
+    console.log('Found booking:', booking); // Debug
+    
+    if (!booking) {
+        showToast('Data booking tidak ditemukan!', 'error');
+        return;
+    }
+    
+    const modalContent = document.getElementById('bookingDetailContent');
+    modalContent.innerHTML = `
+        <div class="booking-detail-container">
+            <div class="text-center mb-4">
+                <h4 class="text-warning">${booking.id}</h4>
+                <span class="payment-status status-${booking.status}">
+                    ${getStatusText(booking.status)}
+                </span>
+            </div>
+            
+            <div class="booking-detail-list">
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Nama Pemesan:</span>
+                    <span class="booking-detail-value">${booking.nama}</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Lapangan:</span>
+                    <span class="booking-detail-value">${getCourtName(booking.lapangan)}</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Tanggal:</span>
+                    <span class="booking-detail-value">${booking.tanggal}</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Waktu:</span>
+                    <span class="booking-detail-value">${booking.waktu}</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Durasi:</span>
+                    <span class="booking-detail-value">${booking.durasi} menit</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Email:</span>
+                    <span class="booking-detail-value">${booking.email}</span>
+                </div>
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">WhatsApp:</span>
+                    <span class="booking-detail-value">${booking.wa}</span>
+                </div>
+                ${booking.paymentMethod ? `
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Metode Bayar:</span>
+                    <span class="booking-detail-value">${booking.paymentMethod}</span>
+                </div>
+                ` : ''}
+                ${booking.paymentProof ? `
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Bukti TF:</span>
+                    <span class="booking-detail-value">
+                        <button class="btn btn-sm btn-outline-warning" onclick="showBookingProof('${booking.id}')">
+                            <i class="fas fa-eye me-1"></i> Lihat
+                        </button>
+                    </span>
+                </div>
+                ` : ''}
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Total:</span>
+                    <span class="booking-detail-value fw-bold fs-5 text-success">
+                        ${formatCurrency(booking.total)}
+                    </span>
+                </div>
+                ${booking.pesan ? `
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Pesan:</span>
+                    <span class="booking-detail-value">${booking.pesan}</span>
+                </div>
+                ` : ''}
+                <div class="booking-detail-item">
+                    <span class="booking-detail-label">Dibuat:</span>
+                    <span class="booking-detail-value">
+                        ${new Date(booking.createdAt).toLocaleString('id-ID')}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
+    modal.show();
+}
+
+// Fungsi khusus untuk melihat bukti transfer di modal history
+function showBookingProof(bookingId) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const booking = bookings.find(b => b.id === bookingId);
+    
+    if (!booking || !booking.paymentProof) {
+        showToast('Bukti pembayaran tidak tersedia', 'error');
+        return;
+    }
+    
+    const modalContent = document.getElementById('proofModalContent');
+    modalContent.innerHTML = `
+        <div class="text-center">
+            <h5 class="text-warning mb-3">Bukti Pembayaran - ${booking.id}</h5>
+            ${booking.paymentProof.startsWith('data:image/') 
+                ? `<img src="${booking.paymentProof}" 
+                     class="img-fluid rounded border border-secondary" 
+                     style="max-height: 500px;"
+                     alt="Bukti Transfer">`
+                : `<div class="alert alert-info">
+                    <i class="fas fa-file-pdf me-2"></i>
+                    File PDF: ${booking.fileName || 'bukti-transfer.pdf'}
+                   </div>`
+            }
+        </div>
+    `;
+    
+    const proofModal = new bootstrap.Modal(document.getElementById('proofModal'));
+    proofModal.show();
+}
+        function printBookingDetail() {
+            window.print();
+        }
+
+
+        // Payment method selection
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Hide all instructions
+                document.querySelectorAll('.payment-instruction').forEach(div => {
+                    div.classList.add('d-none');
+                });
+                
+                // Show selected instruction
+                const method = this.value;
+                if (method === 'bank_transfer') {
+                    document.getElementById('bankInstructions').classList.remove('d-none');
+                } else if (method === 'e_wallet') {
+                    document.getElementById('ewalletInstructions').classList.remove('d-none');
+                } else if (method === 'virtual_account') {
+                    document.getElementById('vaInstructions').classList.remove('d-none');
+                }
+            });
+        });
+        
+        // File upload preview
+        document.getElementById('paymentProof').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameDiv = document.getElementById('fileName');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            const pdfPreview = document.getElementById('pdfPreview');
+            const pdfFileName = document.getElementById('pdfFileName');
+            
+            if (file) {
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('File terlalu besar! Maksimal 5MB.', 'error');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+                if (!validTypes.includes(file.type)) {
+                    showToast('Format file tidak didukung! Gunakan JPG, PNG, atau PDF.', 'error');
+                    this.value = '';
+                    return;
+                }
+                
+                // Update file name
+                fileNameDiv.innerHTML = `
+                    <small class="text-success">
+                        <i class="fas fa-check-circle me-1"></i>
+                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                    </small>
+                `;
+                
+                // Show preview
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.classList.remove('d-none');
+                        pdfPreview.classList.add('d-none');
+                        previewContainer.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    pdfFileName.textContent = file.name;
+                    previewImage.classList.add('d-none');
+                    pdfPreview.classList.remove('d-none');
+                    previewContainer.classList.remove('d-none');
+                }
+            } else {
+                fileNameDiv.innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
+                previewContainer.classList.add('d-none');
+            }
+        });
+        
+        // Update processBooking function to include payment data
+        function processBooking() {
+    const nama = document.getElementById('nama').value.trim();
+    const wa = document.getElementById('wa').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const tanggal = document.getElementById('tanggal').value;
+    const lapangan = document.getElementById('lapangan').value;
+    const durasi = document.getElementById('durasi').value;
+    const pesan = document.getElementById('pesan').value.trim();
+    
+    // Get payment data
+    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+    const paymentProofInput = document.getElementById('paymentProof');
+    
+    if (!nama || !wa || !email || !tanggal || !lapangan || !durasi || !currentState.selectedSlot) {
+        showToast('Harap lengkapi semua data!', 'error');
+        return;
+    }
+    
+    if (!validateEmail()) {
+        showToast('Email harus @gmail.com', 'error');
+        return;
+    }
+    
+    // Check if payment method is selected
+    if (!paymentMethodElement) {
+        showToast('Harap pilih metode pembayaran!', 'error');
+        return;
+    }
+    
+    // Check if payment proof is uploaded
+    if (!paymentProofInput.files[0]) {
+        showToast('Harap upload bukti transfer!', 'error');
+        return;
+    }
+    
+    const paymentMethod = paymentMethodElement.value;
+    
+    // Read payment proof as base64
+    const file = paymentProofInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        // Simpan semua data termasuk pembayaran
+        const bookingData = {
+            id: generateBookingId(),
+            nama,
+            wa,
+            email,
+            tanggal,
+            lapangan,
+            durasi,
+            waktu: currentState.selectedSlot,
+            pesan,
+            paymentMethod: getPaymentMethodText(paymentMethod), // Simpan teks metode pembayaran
+            paymentMethodCode: paymentMethod, // Simpan kode metode pembayaran
+            paymentProof: e.target.result, // Base64 string
+            fileName: file.name, // Nama file
+            fileSize: file.size, // Ukuran file
+            total: parseInt(document.getElementById('total-harga').textContent.replace(/\D/g, '')),
+            status: 'pending',
+            createdAt: new Date().toISOString()
+        };
+        
+        currentState.bookingData = bookingData;
+        
+        // Update invoice dengan data pembayaran
+        updateInvoice(bookingData);
+        
+        showPage('invoice');
+        showToast('Booking berhasil diproses!', 'success');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+        // Tambahkan fungsi validasi file
+function validateFile(file) {
+    // Validasi ukuran file (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+        showToast('File terlalu besar! Maksimal 5MB.', 'error');
+        return false;
+    }
+    
+    // Validasi tipe file
+    const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'application/pdf'
+    ];
+    
+    if (!allowedTypes.includes(file.type)) {
+        showToast('Format file tidak didukung! Gunakan JPG, PNG, atau PDF.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+// Update event listener untuk file upload
+document.getElementById('paymentProof').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const fileNameDiv = document.getElementById('fileName');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const pdfPreview = document.getElementById('pdfPreview');
+    const pdfFileName = document.getElementById('pdfFileName');
+    
+    if (file) {
+        // Validasi file
+        if (!validateFile(file)) {
+            this.value = '';
+            return;
+        }
+        
+        // Update file info
+        const fileSize = (file.size / 1024).toFixed(1);
+        fileNameDiv.innerHTML = `
+            <small class="text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                ${file.name} (${fileSize} KB)
+            </small>
+        `;
+        
+        // Show preview berdasarkan tipe file
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.classList.remove('d-none');
+                pdfPreview.classList.add('d-none');
+                previewContainer.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        } else if (file.type === 'application/pdf') {
+            pdfFileName.textContent = file.name;
+            previewImage.classList.add('d-none');
+            pdfPreview.classList.remove('d-none');
+            previewContainer.classList.remove('d-none');
+        }
+    } else {
+        fileNameDiv.innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
+        previewContainer.classList.add('d-none');
+    }
+});
+        
+        function getPaymentMethodText(method) {
+            const methods = {
+                'bank_transfer': 'Transfer Bank',
+                'e_wallet': 'E-Wallet',
+                'virtual_account': 'Virtual Account'
+            };
+            return methods[method] || 'Unknown';
+        }
+
+        let currentAdminData = null;
+
+function showAdminLogin() {
+    const modal = new bootstrap.Modal(document.getElementById('adminLoginModal'));
+    modal.show();
+}
+
+function loginAdmin() {
+    const password = document.getElementById('adminPassword').value;
+    const errorElement = document.getElementById('adminLoginError');
+    
+    if (password === 'admin123') {
+        errorElement.classList.add('d-none');
+        document.getElementById('adminPassword').value = '';
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
+        modal.hide();
+        
+        showPage('adminPanel');
+        loadAdminData();
+        showToast('Login admin berhasil!', 'success');
+    } else {
+        errorElement.classList.remove('d-none');
+    }
+}
+
+function logoutAdmin() {
+    showPage('landing');
+    showToast('Anda telah logout', 'info');
+}
+
+function loadAdminData() {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    const pending = bookings.filter(b => b.status === 'pending');
+    const confirmed = bookings.filter(b => b.status === 'confirmed');
+    
+    document.getElementById('pendingCount').textContent = pending.length;
+    document.getElementById('confirmedCount').textContent = confirmed.length;
+    document.getElementById('totalBookingsCount').textContent = bookings.length;
+    
+    const totalRevenue = [...confirmed].reduce((sum, b) => sum + (b.total || 0), 0);
+    document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+    
+    renderPendingTable(pending);
+    renderAllTable(bookings);
+}
+
+function renderPendingTable(bookings) {
+    const tableBody = document.getElementById('adminPendingTable');
+    tableBody.innerHTML = '';
+    
+    if (bookings.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="fas fa-check-circle fa-2x mb-3"></i>
+                    <p class="mb-0">Tidak ada booking yang menunggu</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    bookings.forEach(booking => {
+        const row = `
+            <tr>
+                <td><strong>${booking.id}</strong></td>
+                <td>${booking.nama}</td>
+                <td>${getCourtName(booking.lapangan)}</td>
+                <td>${booking.tanggal} ${booking.waktu}</td>
+                <td>${formatCurrency(booking.total)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-info" onclick="showPaymentProof('${booking.id}')">
+                        <i class="fas fa-eye me-1"></i> Lihat
+                    </button>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-success me-2" onclick="confirmAdminPayment('${booking.id}')">
+                        <i class="fas fa-check me-1"></i> Konfirmasi
+                    </button>
+                    <button class="btn btn-sm btn-outline-light" onclick="viewAdminBookingDetail('${booking.id}')">
+                        <i class="fas fa-eye me-1"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
+// Fungsi untuk menampilkan bukti pembayaran
+function showPaymentProof(bookingId) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const booking = bookings.find(b => b.id === bookingId);
+    
+    if (!booking) {
+        showToast('Booking tidak ditemukan', 'error');
+        return;
+    }
+    
+    if (!booking.paymentProof) {
+        showToast('Bukti pembayaran tidak tersedia', 'error');
+        return;
+    }
+    
+    const modalContent = document.getElementById('proofModalContent');
+    
+    // Reset modal content
+    modalContent.innerHTML = `
+        <div class="text-center">
+            <div class="mb-4">
+                <h5 class="text-warning mb-2">${booking.id}</h5>
+                <p class="text-muted mb-0">${booking.nama} - ${getCourtName(booking.lapangan)}</p>
+                <p class="mb-3">
+                    <span class="badge ${booking.status === 'pending' ? 'badge-warning' : 'badge-success'}">
+                        ${booking.status === 'pending' ? 'Menunggu Konfirmasi' : 'Terkonfirmasi'}
+                    </span>
+                </p>
+            </div>
+            
+            <div class="payment-proof-container mb-4">
+                ${booking.paymentProof.startsWith('data:image/') 
+                    ? `<img src="${booking.paymentProof}" 
+                         class="img-fluid rounded border border-secondary" 
+                         style="max-height: 400px; width: auto;"
+                         alt="Bukti Transfer ${booking.id}">`
+                    : `<div class="alert alert-warning bg-dark border-warning">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        File PDF: ${booking.fileName || 'bukti-transfer.pdf'}
+                        <a href="${booking.paymentProof}" 
+                           class="btn btn-sm btn-outline-warning ms-3"
+                           target="_blank" 
+                           download>
+                            <i class="fas fa-download me-1"></i> Download
+                        </a>
+                       </div>`
+                }
+            </div>
+            
+            <div class="booking-info text-start">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Tanggal:</strong> ${booking.tanggal}</p>
+                        <p class="mb-2"><strong>Waktu:</strong> ${booking.waktu}</p>
+                        <p class="mb-2"><strong>Durasi:</strong> ${booking.durasi} menit</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Metode Bayar:</strong> ${booking.paymentMethod || 'Transfer Bank'}</p>
+                        <p class="mb-2"><strong>Total:</strong> ${formatCurrency(booking.total)}</p>
+                        <p class="mb-0"><strong>WhatsApp:</strong> ${booking.wa}</p>
+                    </div>
+                </div>
+                
+                ${booking.pesan ? `
+                <div class="mt-3 p-3 bg-dark rounded">
+                    <strong class="text-warning">Pesan Customer:</strong>
+                    <p class="mb-0 mt-2">"${booking.pesan}"</p>
+                </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    // Tampilkan modal
+    const proofModal = new bootstrap.Modal(document.getElementById('proofModal'));
+    proofModal.show();
+}
+
+function renderAllTable(bookings) {
+    const tableBody = document.getElementById('adminAllTable');
+    tableBody.innerHTML = '';
+    
+    const sorted = bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    if (sorted.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="background: rgba(10, 36, 99, 0.8);">
+                    <div class="text-center py-5">
+                        <i class="fas fa-database fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
+                        <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem;">
+                            Tidak ada data booking
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    sorted.forEach(booking => {
+        const status = booking.status === 'pending' ? 
+            '<span class="badge badge-warning">Menunggu</span>' :
+            booking.status === 'confirmed' ?
+            '<span class="badge badge-success">Dikonfirmasi</span>' :
+            '<span class="badge badge-info">' + getStatusText(booking.status) + '</span>';
+        
+        const row = `
+            <tr>
+                <td><strong style="color: var(--accent);">${booking.id}</strong></td>
+                <td>${booking.nama}</td>
+                <td>${getCourtName(booking.lapangan)}</td>
+                <td>${booking.tanggal} ${booking.waktu}</td>
+                <td style="color: var(--success); font-weight: 600;">${formatCurrency(booking.total)}</td>
+                <td>${status}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-light" onclick="viewAdminBookingDetail('${booking.id}')" style="padding: 5px 10px;">
+                        <i class="fas fa-eye me-1"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
+// Fungsi untuk konfirmasi pembayaran dari admin - LANGSUNG KONFIRMASI
+// Fungsi untuk konfirmasi pembayaran dari admin
+function confirmAdminPayment(bookingId) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const booking = bookings.find(b => b.id === bookingId);
+    
+    if (!booking) {
+        showToast('Booking tidak ditemukan', 'error');
+        return;
+    }
+    
+    // Simpan booking yang akan dikonfirmasi
+    bookingToConfirm = bookingId;
+    bookingDataGlobal = booking; // Simpan data booking
+    
+    // Tampilkan modal konfirmasi yang lebih informatif
+    const confirmMessage = document.getElementById('simpleConfirmMessage');
+    confirmMessage.innerHTML = `
+        <div class="text-center">
+            <p class="mb-3">Konfirmasi pembayaran untuk booking:</p>
+            <div class="alert alert-warning border-warning">
+                <h6 class="mb-2"><strong>${booking.id}</strong></h6>
+                <p class="mb-1">${booking.nama}</p>
+                <p class="mb-1">${getCourtName(booking.lapangan)}</p>
+                <p class="mb-0"><strong>${formatCurrency(booking.total)}</strong></p>
+            </div>
+            <p class="small">Booking akan berstatus "Terkonfirmasi"</p>
+        </div>
+    `;
+    
+    // Set event handler untuk tombol konfirmasi
+    const confirmBtn = document.getElementById('simpleConfirmBtn');
+    confirmBtn.onclick = function() {
+        if (bookingToConfirm) {
+            processAdminConfirmation();
+        }
+    };
+    
+    const modal = new bootstrap.Modal(document.getElementById('simpleConfirmModal'));
+    modal.show();
+}
+
+// Fungsi baru untuk memproses konfirmasi
+function processAdminConfirmation() {
+    if (!bookingToConfirm) return;
+    
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const bookingIndex = bookings.findIndex(b => b.id === bookingToConfirm);
+    
+    if (bookingIndex === -1) {
+        showToast('Booking tidak ditemukan', 'error');
+        return;
+    }
+    
+    // Update status booking
+    bookings[bookingIndex].status = 'confirmed';
+    bookings[bookingIndex].confirmedAt = new Date().toISOString();
+    bookings[bookingIndex].confirmedBy = 'Admin';
+    
+    // Simpan kembali ke localStorage
+    localStorage.setItem('bookings', JSON.stringify(bookings));
+    
+    // Tutup modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('simpleConfirmModal'));
+    modal.hide();
+    
+    // Kirim notifikasi WhatsApp (opsional)
+    sendConfirmationNotification(bookings[bookingIndex]);
+    
+    // Refresh data admin
+    loadAdminData();
+    
+    // Tampilkan notifikasi sukses
+    showToast(`✅ Booking ${bookingToConfirm} berhasil dikonfirmasi!`, 'success');
+    
+    // Reset
+    bookingToConfirm = null;
+    bookingDataGlobal = {};
+}
+
+// Fungsi untuk kirim notifikasi WhatsApp
+function sendConfirmationNotification(booking) {
+    const message = `Halo ${booking.nama}!%0A%0A` +
+                   `Booking Anda telah *DIKONFIRMASI* dengan detail:%0A%0A` +
+                   `*KODE BOOKING*: ${booking.id}%0A` +
+                   `*LAPANGAN*: ${getCourtName(booking.lapangan)}%0A` +
+                   `*TANGGAL*: ${booking.tanggal}%0A` +
+                   `*WAKTU*: ${booking.waktu}%0A` +
+                   `*DURASI*: ${booking.durasi} menit%0A` +
+                   `*STATUS*: ✅ TERKONFIRMASI%0A%0A` +
+                   `Silakan datang tepat waktu. Terima kasih!`;
+    
+    // Buka WhatsApp (bisa di-enable jika perlu)
+    // window.open(`https://wa.me/${booking.wa}?text=${message}`, '_blank');
+}
+
+        </script>
+    </body>
+    </html>
