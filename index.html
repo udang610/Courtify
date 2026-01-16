@@ -753,13 +753,15 @@
         }
 
         /* Loading overlay */
+       /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--gradient);
+            background: rgba(10, 36, 99, 0.8);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -773,14 +775,25 @@
         }
 
         .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             border-top-color: var(--accent);
             animation: spin 1s ease-in-out infinite;
         }
 
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+        }
             .fab:hover {
                 transform: scale(1.1) rotate(90deg);
             }
@@ -1792,6 +1805,14 @@
 
     </head>
     <body>
+
+                <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="text-center">
+                <div class="loading-spinner center"></div>
+            </div>
+        </div>
+
         <!-- Navbar -->
         
     <!-- Ganti bagian navbar dengan yang ini -->
@@ -1871,8 +1892,8 @@
                     <h2 class="text-center mb-4 pt-2 pb-4" style="color: var(--accent);" data-translate="activities">Aktivitas</h2>
                     <div class="col-md-3 mb-4">
                         <div class="stats-card">
-                            <div class="stats-number" id="total-bookings">128</div>
-                            <div class="stats-label" data-translate="completed_bookings">Booking Selesai</div>
+                            <div class="stats-number" id="total-bookings">0</div>
+                            <div class="stats-label" data-translate="completed_bookings">Total Booking</div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-4">
@@ -2229,7 +2250,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="button" class="btn btn-success btn-lg" onclick="processBooking()">
+                            <button type="button" class="btn btn-success btn-lg" id="proceedPaymentBtn">
                                 <i class="fas fa-lock me-2"></i> <span data-translate="proceed_payment">Lanjutkan ke Pembayaran</span>
                             </button>
                         </div>
@@ -2647,6 +2668,8 @@
 </div>
     </div>
 </section>
+
+
 <!-- ======= SAMPAI DI SINI ======= -->
 
         <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
@@ -2755,1027 +2778,636 @@
             </div>
         </footer>
 
-      
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-
-        let currentLang = localStorage.getItem('courtify_lang') || 'id';
-        let bookingToConfirm = null; // Tambahkan ini
-        let bookingDataGlobal = {};
-            
-
-
-            // Language configuration
-    const translations = {
-            id: {
-                // Navbar
-                'home': 'Beranda',
-                'courts': 'Lapangan',
-                'history': 'Riwayat',
-                'team': 'Tim',
-    
-                
-                // Landing Page
-                'hero_title': 'Courtify',
-                'hero_subtitle': 'Booking lapangan olahraga premium dengan pengalaman terbaik. Badminton, Futsal, Basket, Padel - semuanya dalam satu platform.',
-                'explore_courts': 'Jelajahi Lapangan',
-                'book_now': 'Booking Langsung',
-                'activities': 'Aktivitas',
-                'completed_bookings': 'Booking Selesai',
-                'court_types': 'Jenis Lapangan',
-                'customer_satisfaction': 'Kepuasan Pelanggan',
-                'success_rate': 'Success Rate',
-                'why_choose': 'Mengapa Memilih Courtify?',
-                'instant_booking': 'Booking Instan',
-                'instant_desc': 'Proses booking hanya dalam 3 langkah dengan konfirmasi real-time.',
-                'secure_payment': 'Pembayaran Aman',
-                'secure_desc': 'Sistem pembayaran terenkripsi dengan berbagai metode pembayaran.',
-                'support_24': 'Support 24/7',
-                'support_desc': 'Tim support siap membantu kapan saja melalui WhatsApp dan email.',
-                
-                // Court Selection
-                'choose_court': 'Pilih Lapangan Favorit Anda',
-                'court_subtitle': 'Semua lapangan tersedia dengan fasilitas premium dan harga terbaik',
-                'available': 'Tersedia',
-                'almost_full': 'Hampir Penuh',
-                'select_court': 'Pilih Lapangan',
-                'per_hour': '/ jam',
-                
-                // Booking Form
-                'booking_title': 'Booking Lapangan',
-                'booking_subtitle': 'Isi data booking Anda dengan lengkap untuk pengalaman terbaik',
-                'full_name': 'Nama Lengkap',
-                'whatsapp': 'Nomor WhatsApp',
-                'email': 'Email Address',
-                'booking_date': 'Tanggal Booking',
-                'choose_field': 'Pilih Lapangan',
-                'duration': 'Durasi Booking',
-                'choose_time': 'Pilih Jam Mulai',
-                'available_slot': 'Tersedia',
-                'booked_slot': 'Tidak Tersedia',
-                'unavailable_slot': 'Tidak Tersedia',
-                'additional_message': 'Pesan Tambahan (Opsional)',
-                'field_cost': 'Biaya Lapangan:',
-                'duration_text': 'Durasi:',
-                'peak_hour': 'Biaya Tambahan (Peak Hour):',
-                'total': 'Total:',
-                'proceed_payment': 'Lanjutkan ke Pembayaran',
-                
-                // Payment Methods
-                'payment_method': 'Metode Pembayaran',
-                'upload_receipt': 'Upload Bukti Transfer',
-                'choose_payment': 'Pilih Metode Pembayaran',
-                'bank_transfer': 'Transfer Bank',
-                'e_wallet': 'E-Wallet',
-                'virtual_account': 'Virtual Account',
-                'choose_file': 'Pilih File',
-                'no_file_chosen': 'Belum ada file dipilih',
-                'upload_note': 'Format: JPG, PNG, PDF (Maks. 5MB)',
-                'payment_instructions': 'Instruksi Pembayaran:',
-                
-                // Invoice
-                'invoice_title': 'Invoice Booking',
-                'invoice_subtitle': 'Review dan konfirmasi booking Anda',
-                'invoice_date': 'Tanggal:',
-                'booking_code': 'Kode Booking:',
-                'booker_name': 'Nama Pemesan:',
-                'field': 'Lapangan:',
-                'date_time': 'Tanggal & Waktu:',
-                'invoice_duration': 'Durasi:',
-                'total_payment': 'Total Pembayaran:',
-                'important_info': 'Informasi Penting: Booking akan dikonfirmasi dalam 1x24 jam melalui WhatsApp.',
-                'confirm_whatsapp': 'Konfirmasi via WhatsApp',
-                'print_invoice': 'Cetak Invoice',
-                'book_again': 'Booking Lagi',
-                
-                // History
-                'history_title': 'Riwayat Booking',
-                'history_subtitle': 'Lihat semua booking yang pernah Anda lakukan',
-                'filter_status': 'Filter Status',
-                'all': 'Semua',
-                'pending': 'Pending',
-                'confirmed': 'Dikonfirmasi',
-                'completed': 'Selesai',
-                'cancelled': 'Dibatalkan',
-                'reset_data': 'Reset Data',
-                'no_history': 'Belum ada riwayat booking',
-                'no_history_desc': 'Mulai booking lapangan pertama Anda!',
-                'book_now_btn': 'Booking Sekarang',
-                'load_more': 'Load More',
-                
-                // Team
-                'team_title': 'Tim Kami',
-                'team_subtitle': 'Orang-orang di balik kesuksesan Courtify',
-                
-                // Footer
-                'navigation': 'Navigasi',
-                'contact': 'Kontak',
-                'operational_hours': 'Jam Operasional',
-                'every_day': 'Setiap hari : 06.00 - 24.00',
-                'copyright': 'Hak Cipta Dilindungi',
-                'privacy_policy': 'Privacy Policy',
-                'terms_service': 'Terms of Service',
-                
-                // Court Descriptions
-                'badminton_desc': 'Lapangan standar internasional dengan lighting professional. Permukaan kayu maple berkualitas tinggi.',
-                'futsal_desc': 'Rumput sintetis premium dengan safety mat berkualitas. Sistem drainase yang baik.',
-                'basket_desc': 'Lapangan indoor dengan floor khusus dan ring profesional. Pencahayaan LED yang optimal.',
-                'padel_desc': 'Lapangan standar internasional dengan dinding kaca premium. Pencahayaan yang merata.',
-                
-                // Court Features
-                'wifi': 'WiFi',
-                'parking': 'Parkir',
-                'ac': 'AC',
-                'sound_system': 'Sound System',
-                'canteen': 'Kantin',
-                'shower': 'Shower',
-                'scoreboard': 'Scoreboard',
-                'ventilation': 'Ventilasi'
-            },
-            en: {
-                // Navbar
-                'home': 'Home',
-                'courts': 'Courts',
-                'history': 'History',
-                'team': 'Team',
-                
-                // Landing Page
-                'hero_title': 'Courtify',
-                'hero_subtitle': 'Premium sports court booking with the best experience. Badminton, Futsal, Basketball, Padel - all in one platform.',
-                'explore_courts': 'Explore Courts',
-                'book_now': 'Book Now',
-                'activities': 'Activities',
-                'completed_bookings': 'Completed Bookings',
-                'court_types': 'Court Types',
-                'customer_satisfaction': 'Customer Satisfaction',
-                'success_rate': 'Success Rate',
-                'why_choose': 'Why Choose Courtify?',
-                'instant_booking': 'Instant Booking',
-                'instant_desc': 'Booking process in just 3 steps with real-time confirmation.',
-                'secure_payment': 'Secure Payment',
-                'secure_desc': 'Encrypted payment system with various payment methods.',
-                'support_24': '24/7 Support',
-                'support_desc': 'Support team ready to help anytime via WhatsApp and email.',
-                
-                // Court Selection
-                'choose_court': 'Choose Your Favorite Court',
-                'court_subtitle': 'All courts available with premium facilities and best prices',
-                'available': 'Available',
-                'almost_full': 'Almost Full',
-                'select_court': 'Select Court',
-                'per_hour': '/ hour',
-                
-                // Booking Form
-                'booking_title': 'Book a Court',
-                'booking_subtitle': 'Fill your booking data completely for the best experience',
-                'full_name': 'Full Name',
-                'whatsapp': 'WhatsApp Number',
-                'email': 'Email Address',
-                'booking_date': 'Booking Date',
-                'choose_field': 'Choose Court',
-                'duration': 'Booking Duration',
-                'choose_time': 'Choose Start Time',
-                'available_slot': 'Available',
-                'booked_slot': 'Unavailable',
-                'unavailable_slot': 'Unavailable',
-                'additional_message': 'Additional Message (Optional)',
-                'field_cost': 'Court Cost:',
-                'duration_text': 'Duration:',
-                'peak_hour': 'Peak Hour Surcharge:',
-                'total': 'Total:',
-                'proceed_payment': 'Proceed to Payment',
-                
-                // Payment Methods
-                'payment_method': 'Payment Method',
-                'upload_receipt': 'Upload Transfer Receipt',
-                'choose_payment': 'Choose Payment Method',
-                'bank_transfer': 'Bank Transfer',
-                'e_wallet': 'E-Wallet',
-                'virtual_account': 'Virtual Account',
-                'choose_file': 'Choose File',
-                'no_file_chosen': 'No file chosen',
-                'upload_note': 'Format: JPG, PNG, PDF (Max. 5MB)',
-                'payment_instructions': 'Payment Instructions:',
-                
-                // Invoice
-                'invoice_title': 'Booking Invoice',
-                'invoice_subtitle': 'Review and confirm your booking',
-                'invoice_date': 'Date:',
-                'booking_code': 'Booking Code:',
-                'booker_name': 'Booker Name:',
-                'field': 'Court:',
-                'date_time': 'Date & Time:',
-                'invoice_duration': 'Duration:',
-                'total_payment': 'Total Payment:',
-                'important_info': 'Important Information: Booking will be confirmed within 24 hours via WhatsApp.',
-                'confirm_whatsapp': 'Confirm via WhatsApp',
-                'print_invoice': 'Print Invoice',
-                'book_again': 'Book Again',
-                
-                // History
-                'history_title': 'Booking History',
-                'history_subtitle': 'View all bookings you have made',
-                'filter_status': 'Filter Status',
-                'all': 'All',
-                'pending': 'Pending',
-                'confirmed': 'Confirmed',
-                'completed': 'Completed',
-                'cancelled': 'Cancelled',
-                'reset_data': 'Reset Data',
-                'no_history': 'No booking history yet',
-                'no_history_desc': 'Start your first court booking!',
-                'book_now_btn': 'Book Now',
-                'load_more': 'Load More',
-                
-                // Team
-                'team_title': 'Our Team',
-                'team_subtitle': 'The people behind Courtify\'s success',
-                
-                // Footer
-                'navigation': 'Navigation',
-                'contact': 'Contact',
-                'operational_hours': 'Operational Hours',
-                'every_day': 'Every day : 06.00 - 24.00',
-                'copyright': 'All Rights Reserved',
-                'privacy_policy': 'Privacy Policy',
-                'terms_service': 'Terms of Service',
-                
-                // Court Descriptions
-                'badminton_desc': 'International standard court with professional lighting. High-quality maple wood surface.',
-                'futsal_desc': 'Premium synthetic turf with quality safety mat. Good drainage system.',
-                'basket_desc': 'Indoor court with special flooring and professional hoops. Optimal LED lighting.',
-                'padel_desc': 'International standard court with premium glass walls. Even lighting.',
-                
-                // Court Features
-                'wifi': 'WiFi',
-                'parking': 'Parking',
-                'ac': 'AC',
-                'sound_system': 'Sound System',
-                'canteen': 'Canteen',
-                'shower': 'Shower',
-                'scoreboard': 'Scoreboard',
-                'ventilation': 'Ventilation'
-            }
-        };
-
-    // Current language
-   
-
-    // Function to set language
-    // Di dalam script, ganti fungsi setLanguage() dengan ini:
-    function setLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('courtify_lang', lang);
-        applyTranslations();
         
-        // Update dropdown text
-        const dropdownToggle = document.querySelector('#languageDropdown');
-        const icon = dropdownToggle.querySelector('i').cloneNode(true);
-        dropdownToggle.innerHTML = '';
-        dropdownToggle.appendChild(icon);
-        dropdownToggle.appendChild(document.createTextNode(lang === 'id' ? ' Bahasa' : ' Language'));
 
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-                if (item.textContent.includes('🇮🇩')) {
-                    item.textContent = lang === 'id' ? '✅ 🇮🇩 Indonesia' : '🇮🇩 Indonesia';
-                }
-                if (item.textContent.includes('🇬🇧')) {
-                    item.textContent = lang === 'en' ? '✅ 🇬🇧 English' : '🇬🇧 English';
-                }
-            });
-            
-            showToast(lang === 'id' ? 'Bahasa diubah ke Indonesia' : 'Language changed to English', 'success');
-        }
 
-    // Perbaiki fungsi applyTranslations() untuk menerjemahkan lebih banyak elemen:
-    function applyTranslations() {
-        const langData = translations[currentLang];
-        
-        // Update semua elemen dengan data-translate
-        document.querySelectorAll('[data-translate]').forEach(element => {
-                const key = element.getAttribute('data-translate');
-                if (langData[key]) {
-                    element.textContent = langData[key];
-                }
-            });
-        document.querySelectorAll('[data-placeholder]').forEach(element => {
-                const key = element.getAttribute('data-placeholder');
-                if (langData[key]) {
-                    element.placeholder = langData[key];
-                }
-            });
 
-        document.title = currentLang === 'id' ? 'Courtify - Premium Sports Court Booking' : 'Courtify - Premium Sports Court Booking';
-            
-            // 4. Update teks statis
-            updateStaticTexts(langData);
-        }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ===== KONFIGURASI UTAMA =====
+const PAGES = ['landing', 'daftar', 'booking', 'invoice', 'history', 'team', 'adminPanel'];
+const COURT_PRICES = {
+    'badminton': 50000,
+    'futsal': 75000,
+    'basket': 60000,
+    'padel': 80000
+};
 
-    // Tambahkan fungsi baru untuk update teks statis:
-    function updateStaticTexts(langData) {
-        // Hero section
-        const heroTitle = document.querySelector('.hero-title');
-        const heroSubtitle = document.querySelector('.hero-subtitle');
-        if (heroTitle && langData.hero_title) heroTitle.textContent = langData.hero_title;
-        if (heroSubtitle && langData.hero_subtitle) heroSubtitle.textContent = langData.hero_subtitle;
-        
-        // Section headers
-            const headers = document.querySelectorAll('h1, h2, h3, h4, h5');
-            headers.forEach(header => {
-                const text = header.textContent.trim();
-                Object.keys(langData).forEach(key => {
-                    // Cek apakah teks header cocok dengan terjemahan Indonesia
-                    if (translations.id[key] === text) {
-                        header.textContent = langData[key];
-                    }
-                });
-            });
-            
-            // Card titles and descriptions
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                const title = card.querySelector('.card-title');
-                const text = card.querySelector('.card-text');
-                const button = card.querySelector('.btn');
-                
-                if (title) {
-                    const titleText = title.textContent.trim();
-                    Object.keys(langData).forEach(key => {
-                        if (translations.id[key] === titleText) {
-                            title.textContent = langData[key];
-                        }
-                    });
-                }
-                
-                if (text) {
-                    const textContent = text.textContent.trim();
-                    Object.keys(langData).forEach(key => {
-                        if (translations.id[key] === textContent) {
-                            text.textContent = langData[key];
-                        }
-                    });
-                }
-                
-                if (button) {
-                    const buttonText = button.textContent.trim();
-                    Object.keys(langData).forEach(key => {
-                        if (translations.id[key] === buttonText) {
-                            button.textContent = langData[key];
-                        }
-                    });
-                }
-            });
-            
-            // Badges
-            const badges = document.querySelectorAll('.badge, .feature-badge');
-            badges.forEach(badge => {
-                const badgeText = badge.textContent.trim();
-                Object.keys(langData).forEach(key => {
-                    if (translations.id[key] === badgeText) {
-                        badge.textContent = langData[key];
-                    }
-                });
-            });
-            
-            // Footer
-            const footerLinks = document.querySelectorAll('.footer-links a');
-            footerLinks.forEach(link => {
-                const linkText = link.textContent.trim();
-                Object.keys(langData).forEach(key => {
-                    if (translations.id[key] === linkText) {
-                        link.textContent = langData[key];
-                    }
-                });
-            });
-            
-            // Invoice items
-            const invoiceItems = document.querySelectorAll('.invoice-item span:first-child');
-            invoiceItems.forEach(item => {
-                const itemText = item.textContent.trim();
-                Object.keys(langData).forEach(key => {
-                    if (translations.id[key] === itemText.replace(':', '').trim()) {
-                        item.textContent = langData[key] + ':';
-                    }
-                });
-            });
-            
-            // Time slot legend
-            const legendItems = document.querySelectorAll('.text-muted.text-readable span');
-            if (legendItems.length >= 3) {
-                if (langData.available_slot) legendItems[0].textContent = langData.available_slot;
-                if (langData.booked_slot) legendItems[2].textContent = langData.booked_slot;
-                if (langData.unavailable_slot) legendItems[4].textContent = langData.unavailable_slot;
-            }
-        }
-        
-    // Tambahkan kode untuk inisialisasi dropdown bahasa saat load:
-    // Initialize language on page load
-        document.addEventListener('DOMContentLoaded', function() {
-    const savedLang = localStorage.getItem('courtify_lang') || 'id';
-    currentLang = savedLang;
-    applyTranslations();
+// ===== STATE MANAGEMENT =====
+let currentLang = localStorage.getItem('courtify_lang') || 'id';
+let bookingToConfirm = null;
+let bookingDataGlobal = {};
+let currentState = {
+    selectedCourt: null,
+    selectedSlot: null,
+    bookingData: null,
+    currentPage: 'landing',
+    historyPage: 1,
+    filterStatus: 'all',
+    historyItems: 5,
+    // TAMBAHKAN: Menyimpan waktu terakhir reset form
+    lastFormReset: null
+};
 
-    const dropdownToggle = document.querySelector('#languageDropdown');
-    if (dropdownToggle) {
-        const icon = dropdownToggle.querySelector('i').cloneNode(true);
-        dropdownToggle.innerHTML = '';
-        dropdownToggle.appendChild(icon);
-        dropdownToggle.appendChild(document.createTextNode(currentLang === 'id' ? ' Bahasa' : ' Language'));
+// ===== TRANSLATIONS =====
+const translations = {
+    id: {
+        // Navbar
+        'home': 'Beranda',
+        'courts': 'Lapangan',
+        'history': 'Riwayat',
+        'team': 'Tim',
+        'hero_title': 'Courtify',
+        'hero_subtitle': 'Booking lapangan olahraga premium dengan pengalaman terbaik.',
+        'explore_courts': 'Jelajahi Lapangan',
+        'book_now': 'Booking Langsung',
+        'activities': 'Aktivitas',
+        'completed_bookings': 'Booking Selesai',
+        'court_types': 'Jenis Lapangan',
+        'customer_satisfaction': 'Kepuasan Pelanggan',
+        'success_rate': 'Success Rate',
+        'why_choose': 'Mengapa Memilih Courtify?',
+        'instant_booking': 'Booking Instan',
+        'instant_desc': 'Proses booking hanya dalam 3 langkah.',
+        'secure_payment': 'Pembayaran Aman',
+        'secure_desc': 'Sistem pembayaran terenkripsi.',
+        'support_24': 'Support 24/7',
+        'support_desc': 'Tim support siap membantu.',
+        'choose_court': 'Pilih Lapangan Favorit Anda',
+        'court_subtitle': 'Semua lapangan tersedia dengan fasilitas premium',
+        'available': 'Tersedia',
+        'almost_full': 'Hampir Penuh',
+        'select_court': 'Pilih Lapangan',
+        'per_hour': '/ jam',
+        'booking_title': 'Booking Lapangan',
+        'booking_subtitle': 'Isi data booking Anda dengan lengkap',
+        'full_name': 'Nama Lengkap',
+        'whatsapp': 'Nomor WhatsApp',
+        'email': 'Email Address',
+        'booking_date': 'Tanggal Booking',
+        'choose_field': 'Pilih Lapangan',
+        'duration': 'Durasi Booking',
+        'choose_time': 'Pilih Jam Mulai',
+        'available_slot': 'Tersedia',
+        'booked_slot': 'Tidak Tersedia',
+        'additional_message': 'Pesan Tambahan (Opsional)',
+        'field_cost': 'Biaya Lapangan:',
+        'duration_text': 'Durasi:',
+        'peak_hour': 'Biaya Tambahan (Peak Hour):',
+        'total': 'Total:',
+        'proceed_payment': 'Lanjutkan ke Pembayaran',
+        'payment_method': 'Metode Pembayaran',
+        'upload_receipt': 'Upload Bukti Transfer',
+        'bank_transfer': 'Transfer Bank',
+        'e_wallet': 'E-Wallet',
+        'virtual_account': 'Virtual Account',
+        'choose_file': 'Pilih File',
+        'no_file_chosen': 'Belum ada file dipilih',
+        'upload_note': 'Format: JPG, PNG, PDF (Maks. 5MB)',
+        'invoice_title': 'Invoice Booking',
+        'invoice_subtitle': 'Review dan konfirmasi booking Anda',
+        'booking_code': 'Kode Booking:',
+        'booker_name': 'Nama Pemesan:',
+        'field': 'Lapangan:',
+        'date_time': 'Tanggal & Waktu:',
+        'invoice_duration': 'Durasi:',
+        'total_payment': 'Total Pembayaran:',
+        'important_info': 'Informasi Penting: Booking akan dikonfirmasi dalam 1x24 jam melalui WhatsApp.',
+        'confirm_whatsapp': 'Konfirmasi via WhatsApp',
+        'print_invoice': 'Cetak Invoice',
+        'book_again': 'Booking Lagi',
+        'history_title': 'Riwayat Booking',
+        'history_subtitle': 'Lihat semua booking yang pernah Anda lakukan',
+        'filter_status': 'Filter Status',
+        'all': 'Semua',
+        'pending': 'Pending',
+        'confirmed': 'Dikonfirmasi',
+        'completed': 'Selesai',
+        'cancelled': 'Dibatalkan',
+        'reset_data': 'Reset Data',
+        'no_history': 'Belum ada riwayat booking',
+        'no_history_desc': 'Mulai booking lapangan pertama Anda!',
+        'book_now_btn': 'Booking Sekarang',
+        'load_more': 'Load More'
+    },
+    en: {
+        // Navbar
+        'home': 'Home',
+        'courts': 'Courts',
+        'history': 'History',
+        'team': 'Team',
+        'hero_title': 'Courtify',
+        'hero_subtitle': 'Premium sports court booking with the best experience.',
+        'explore_courts': 'Explore Courts',
+        'book_now': 'Book Now',
+        'activities': 'Activities',
+        'completed_bookings': 'Completed Bookings',
+        'court_types': 'Court Types',
+        'customer_satisfaction': 'Customer Satisfaction',
+        'success_rate': 'Success Rate',
+        'why_choose': 'Why Choose Courtify?',
+        'instant_booking': 'Instant Booking',
+        'instant_desc': 'Booking process in just 3 steps.',
+        'secure_payment': 'Secure Payment',
+        'secure_desc': 'Encrypted payment system.',
+        'support_24': '24/7 Support',
+        'support_desc': 'Support team ready to help.',
+        'choose_court': 'Choose Your Favorite Court',
+        'court_subtitle': 'All courts available with premium facilities',
+        'available': 'Available',
+        'almost_full': 'Almost Full',
+        'select_court': 'Select Court',
+        'per_hour': '/ hour',
+        'booking_title': 'Book a Court',
+        'booking_subtitle': 'Fill your booking data completely',
+        'full_name': 'Full Name',
+        'whatsapp': 'WhatsApp Number',
+        'email': 'Email Address',
+        'booking_date': 'Booking Date',
+        'choose_field': 'Choose Court',
+        'duration': 'Booking Duration',
+        'choose_time': 'Choose Start Time',
+        'available_slot': 'Available',
+        'booked_slot': 'Unavailable',
+        'additional_message': 'Additional Message (Optional)',
+        'field_cost': 'Court Cost:',
+        'duration_text': 'Duration:',
+        'peak_hour': 'Peak Hour Surcharge:',
+        'total': 'Total:',
+        'proceed_payment': 'Proceed to Payment',
+        'payment_method': 'Payment Method',
+        'upload_receipt': 'Upload Transfer Receipt',
+        'bank_transfer': 'Bank Transfer',
+        'e_wallet': 'E-Wallet',
+        'virtual_account': 'Virtual Account',
+        'choose_file': 'Choose File',
+        'no_file_chosen': 'No file chosen',
+        'upload_note': 'Format: JPG, PNG, PDF (Max. 5MB)',
+        'invoice_title': 'Booking Invoice',
+        'invoice_subtitle': 'Review and confirm your booking',
+        'booking_code': 'Booking Code:',
+        'booker_name': 'Booker Name:',
+        'field': 'Court:',
+        'date_time': 'Date & Time:',
+        'invoice_duration': 'Duration:',
+        'total_payment': 'Total Payment:',
+        'important_info': 'Important Information: Booking will be confirmed within 24 hours via WhatsApp.',
+        'confirm_whatsapp': 'Confirm via WhatsApp',
+        'print_invoice': 'Print Invoice',
+        'book_again': 'Book Again',
+        'history_title': 'Booking History',
+        'history_subtitle': 'View all bookings you have made',
+        'filter_status': 'Filter Status',
+        'all': 'All',
+        'pending': 'Pending',
+        'confirmed': 'Confirmed',
+        'completed': 'Completed',
+        'cancelled': 'Cancelled',
+        'reset_data': 'Reset Data',
+        'no_history': 'No booking history yet',
+        'no_history_desc': 'Start your first court booking!',
+        'book_now_btn': 'Book Now',
+        'load_more': 'Load More'
     }
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        if (item.textContent.includes('🇮🇩')) {
-            item.textContent = currentLang === 'id' ? '✅ 🇮🇩 Indonesia' : '🇮🇩 Indonesia';
-        }
-        if (item.textContent.includes('🇬🇧')) {
-            item.textContent = currentLang === 'en' ? '✅ 🇬🇧 English' : '🇬🇧 English';
-        }
-    });
+};
 
-    // ✅ TUNDA sedikit agar DOM siap
-        loadState();
-        initApp(); // initApp akan panggil showPage(currentState.currentPage)
-        
-        loadFromStorage();
-        updateStats();
-        applyTranslations();
-        
-        console.log('App initialized. Current page:', currentState.currentPage);
-    });
+// ===== FUNGSI UTAMA =====
 
-            const confirmModal = document.getElementById('simpleConfirmModal');
-            if (confirmModal) {
-                confirmModal.addEventListener('hidden.bs.modal', function () {
-                    bookingToConfirm = null;
-                    bookingDataGlobal = {};
-                });
-            }
+// 1. FUNGSI UNTUK LAPANGAN
+function selectCourt(courtType) {
+    console.log('Memilih lapangan:', courtType);
     
-    // Handle modal shown
-    const adminLoginModal = document.getElementById('adminLoginModal');
-    if (adminLoginModal) {
-        adminLoginModal.addEventListener('shown.bs.modal', function () {
-            document.getElementById('adminPassword').focus();
-        });
-    }
+    currentState.selectedCourt = courtType;
+    currentState.selectedSlot = null;
+    currentState.lastFormReset = Date.now();
     
-    // Handle enter key di password admin
-    document.getElementById('adminPassword')?.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            loginAdmin();
-        }
-    });
-
-            // State Management
-            let currentState = {
-                selectedCourt: null,
-                selectedSlot: null,
-                bookingData: null,
-                currentPage: 'landing',
-                historyPage: 1,
-                filterStatus: 'all',
-                historyItems: 5 // Default items per page
-            };
-
-            // GANTI fungsi saveState() di dalam showPage() dengan yang ini di bagian atas:
-                function saveState() {
-                    localStorage.setItem('courtify_currentPage', currentState.currentPage);
-                    localStorage.setItem('courtify_fullState', JSON.stringify(currentState));
-                    localStorage.setItem('courtifyState', JSON.stringify(currentState)); // Untuk kompatibilitas
-                }
-
-
-
-            // Fungsi sederhana untuk animasi navbar
-    function animateNavbar() {
-        const navbar = document.getElementById('mainNavbar');
-        
-        // Tambah class bounce
-        navbar.classList.add('navbar-bounce');
-        
-        // Hapus class setelah animasi selesai
-        setTimeout(() => {
-            navbar.classList.remove('navbar-bounce');
-        }, 600);
-    }
-
-    // GANTI fungsi initApp() dengan yang ini:
-    function initApp() {
-    console.log('initApp called');
+    // Simpan state
+    saveState();
     
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    const tanggalInput = document.getElementById('tanggal'); // 🔥 DIDEFINISIKAN DI SINI
-    if (tanggalInput) {
-        tanggalInput.min = today;
-        tanggalInput.value = today;
-    }
+    // Tampilkan halaman booking
+    showPage('booking');
     
-    // Initialize slots
-    loadSlots();
-    
-    // Email validation
-    const emailInput = document.getElementById('email');
-    if (emailInput) {
-        emailInput.addEventListener('input', validateEmail);
-    }
-    
-    // Set invoice date
-    const invoiceDate = document.getElementById('invoice-date');
-    if (invoiceDate) {
-        invoiceDate.textContent = formatDate(new Date());
-    }
-    
-    // Tampilkan halaman berdasarkan currentState
-    console.log('Trying to show page:', currentState.currentPage);
-    
-    // Tunggu sedikit agar DOM benar-benar siap
+    // Tunggu halaman booking siap, lalu setup form
     setTimeout(() => {
-        showPage(currentState.currentPage);
+        const lapanganSelect = document.getElementById('lapangan');
+        const tanggalInput = document.getElementById('tanggal');
         
-        // Sembunyikan loader setelah halaman ditampilkan
-        setTimeout(() => {
-            const loader = document.getElementById('initialLoader');
-            if (loader) {
-                loader.classList.add('hidden');
-                setTimeout(() => {
-                    loader.remove();
-                }, 500);
+        if (lapanganSelect) {
+            // Set nilai lapangan
+            lapanganSelect.value = courtType;
+            
+            // Update harga
+            updatePrice();
+            
+            // Reset form booking (opsional, tergantung kebutuhan)
+            // resetBookingForm();
+            
+            // Set tanggal ke hari ini
+            if (tanggalInput) {
+                const today = new Date().toISOString().split('T')[0];
+                tanggalInput.value = today;
+                tanggalInput.min = today;
+                
+                // Load slots untuk tanggal hari ini
+                loadSlots();
             }
-        }, 300);
+            
+            showToast(`Lapangan ${getCourtName(courtType)} dipilih!`, 'success');
+        }
     }, 100);
 }
-    // Fungsi untuk update navigasi aktif
-    // Fungsi untuk update navigasi aktif (tambahkan parameter)
-    function updateNavActiveState(pageId) {
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Set active nav based on page
-        if (pageId === 'landing') {
-            const navLink = document.querySelector('.nav-link[onclick*="landing"]');
-            if (navLink) navLink.classList.add('active');
-        } else if (pageId === 'daftar') {
-            const navLink = document.querySelector('.nav-link[onclick*="daftar"]');
-            if (navLink) navLink.classList.add('active');
-        } else if (pageId === 'history') {
-            const navLink = document.querySelector('.nav-link[onclick*="history"]');
-            if (navLink) navLink.classList.add('active');
-        } else if (pageId === 'team') {
-            const navLink = document.querySelector('.nav-link[onclick*="team"]');
-            if (navLink) navLink.classList.add('active');
-        } else if (pageId === 'booking' || pageId === 'invoice') {
-            // Untuk booking dan invoice, aktifkan menu daftar
-            const navLink = document.querySelector('.nav-link[onclick*="daftar"]');
-            if (navLink) navLink.classList.add('active');
+
+function updatePrice() {
+    const lapanganSelect = document.getElementById('lapangan');
+    const durasiSelect = document.getElementById('durasi');
+    
+    if (!lapanganSelect || !durasiSelect) return;
+    
+    const courtType = lapanganSelect.value;
+    const pricePerHour = COURT_PRICES[courtType] || 0;
+    const durasi = parseInt(durasiSelect.value || '60');
+    
+    // Hitung biaya dasar
+    const biayaLapangan = (pricePerHour * durasi) / 60;
+    
+    // Hitung biaya tambahan (peak hour 18:00-22:00)
+    let peakHour = 0;
+    if (currentState.selectedSlot) {
+        const hour = parseInt(currentState.selectedSlot.split(':')[0]);
+        if (hour >= 18 && hour < 22) {
+            peakHour = biayaLapangan * 0.2;
         }
     }
+    
+    const total = biayaLapangan + peakHour;
+    
+    // Update tampilan
+    const biayaLapanganEl = document.getElementById('biaya-lapangan');
+    const peakHourEl = document.getElementById('peak-hour');
+    const totalHargaEl = document.getElementById('total-harga');
+    const durasiTextEl = document.getElementById('durasi-text');
+    
+    if (biayaLapanganEl) biayaLapanganEl.textContent = formatCurrency(biayaLapangan);
+    if (peakHourEl) peakHourEl.textContent = formatCurrency(peakHour);
+    if (totalHargaEl) totalHargaEl.textContent = formatCurrency(total);
+    if (durasiTextEl) durasiTextEl.textContent = `${durasi} menit`;
+}
 
-                // ===== FUNGSI ANIMASI NAVBAR =====
+function calculateTotal() {
+    updatePrice();
+}
 
-    // Fungsi untuk animasi bounce navbar
-    function animateNavbar() {
-        const navbar = document.getElementById('mainNavbar');
-        
-        // Tambah class bounce
-        navbar.classList.add('navbar-bounce');
-        
-        // Hapus class setelah animasi selesai
-        setTimeout(() => {
-            navbar.classList.remove('navbar-bounce');
-        }, 600);
-        
-        // Auto close navbar di mobile
-        if (window.innerWidth <= 992) {
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.getElementById('navbarNav');
-            
-            if (navbarCollapse.classList.contains('show')) {
-                navbarToggler.click();
-            }
-        }
-    }
-
-    // Fungsi untuk animasi slide navbar
-    function slideNavbar(direction = 'down') {
-        const navbar = document.getElementById('mainNavbar');
-        
-        if (direction === 'down') {
-            navbar.classList.remove('navbar-slide-up');
-            navbar.classList.add('navbar-slide-down');
-        } else {
-            navbar.classList.remove('navbar-slide-down');
-            navbar.classList.add('navbar-slide-up');
-            
-            setTimeout(() => {
-                navbar.classList.remove('navbar-slide-up');
-            }, 500);
-        }
-    }
-
-    // Fungsi untuk efek pulse pada navbar
-    function pulseNavbar() {
-        const navbar = document.getElementById('mainNavbar');
-        
-        navbar.classList.add('navbar-pulse');
-        
-        setTimeout(() => {
-            navbar.classList.remove('navbar-pulse');
-        }, 1000);
-    }
-
-    // Efek scroll pada navbar
-    let lastScrollTop = 0;
-    const navbar = document.getElementById('mainNavbar');
-
-    window.addEventListener('scroll', function() {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollTop > lastScrollTop && scrollTop > 100) {
-            // Scroll down - hide navbar
-            navbar.style.transform = 'translateY(-100%)';
-            navbar.style.transition = 'transform 0.3s ease';
-        } else {
-            // Scroll up - show navbar
-            navbar.style.transform = 'translateY(0)';
-            
-            // Tambah efek saat di atas
-            if (scrollTop > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
-        }
-        
-        lastScrollTop = scrollTop;
-    });
-
-    // Tambah event listener untuk semua nav link
-    document.addEventListener('DOMContentLoaded', function() {
-        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Animasi ripple effect
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.cssText = `
-                    position: absolute;
-                    border-radius: 50%;
-                    background: rgba(255, 255, 255, 0.3);
-                    transform: scale(0);
-                    animation: ripple-animation 0.6s linear;
-                    width: ${size}px;
-                    height: ${size}px;
-                    top: ${y}px;
-                    left: ${x}px;
-                `;
-                
-                this.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-            
-            // Hover effect dengan delay
-            link.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px) scale(1.05)';
-            });
-            
-            link.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Brand click animation
-        const brand = document.querySelector('.navbar-brand');
-        brand.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Rotate animation
-            this.style.transform = 'rotate(-10deg)';
-            
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 300);
-            
-            showPage('landing');
-            animateNavbar();
-        });
-        
-        // Hamburger menu animation
-        const toggler = document.querySelector('.navbar-toggler');
-        toggler.addEventListener('click', function() {
-            // Rotate animation
-            this.classList.toggle('active');
-            
-            if (this.classList.contains('active')) {
-                this.style.transform = 'rotate(180deg)';
-            } else {
-                this.style.transform = 'rotate(0)';
-            }
-            
-            // Pulse effect
-            pulseNavbar();
-        });
-    });
-
-
-
-    // Tambah CSS untuk ripple animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-
-
-
-
-        // GANTI fungsi showPage() dengan yang ini:
-            function showPage(pageId) {
-    console.log('showPage called with:', pageId);
-
-    if (!document.getElementById(pageId)) {
+// 2. FUNGSI NAVIGASI
+function showPage(pageId) {
+    console.log('Navigasi ke:', pageId);
+    
+    // Validasi halaman
+    if (!pageId || !document.getElementById(pageId)) {
         pageId = 'landing';
     }
-
+    
+    // Tampilkan loading untuk transisi halaman
+    if (pageId !== currentState.currentPage) {
+        showLoading(`Memuat ${getPageName(pageId)}...`);
+    }
+    
+    // Sembunyikan semua halaman
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
         page.style.display = 'none';
-        page.style.opacity = '0';
-        page.style.transform = 'translateY(0)';
     });
-
+    
+    // Tampilkan halaman target
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.style.display = 'block';
-        targetPage.offsetHeight;
         setTimeout(() => {
             targetPage.classList.add('active');
-            targetPage.style.opacity = '1';
-            targetPage.style.transform = 'translateY(0)';
         }, 10);
-    }
-
-    currentState.currentPage = pageId;
-
-    // 🔥 RESET FORM jika user membuka halaman booking secara manual (bukan dari proses internal)
-    if (pageId === 'booking') {
-        // Hanya reset jika tidak sedang dalam proses lanjutan (misal: tidak ada selectedCourt yang valid)
-        if (!currentState.selectedCourt && !currentState.selectedSlot) {
-            resetBookingForm();
-            // Kosongkan juga data booking sebelumnya
-            currentState.bookingData = null;
-        }
-    }
-
-    updateNavActiveState(pageId);
-
-    if (pageId === 'history') {
-        setTimeout(() => loadHistory(), 500);
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    saveState();
-    document.body.classList.add('page-ready');
-}
-
-                // Fungsi yang lebih baik untuk saveState
-                function saveState() {
-                    localStorage.setItem('courtify_currentPage', currentState.currentPage);
-                    localStorage.setItem('courtify_fullState', JSON.stringify(currentState));
-                }
-function loadState() {
-    console.log('loadState called');
-    
-    // Coba ambil halaman terakhir
-    const savedPage = localStorage.getItem('courtify_currentPage');
-    
-    // Izinkan invoice jika ada data sementara
-    const allowedPages = ['landing', 'daftar', 'history', 'team'];
-    let canRestoreInvoice = false;
-    
-    if (savedPage === 'invoice') {
-        const tempData = localStorage.getItem('tempInvoiceData');
-        if (tempData) {
-            try {
-                currentState.bookingData = JSON.parse(tempData);
-                canRestoreInvoice = true;
-            } catch (e) {
-                console.error('Failed to parse temp invoice data:', e);
-            }
-        }
-    }
-
-    if ((savedPage && allowedPages.includes(savedPage) && document.getElementById(savedPage)) || canRestoreInvoice) {
-        currentState.currentPage = savedPage;
-        console.log('Restored page:', savedPage);
-    } else {
-        currentState.currentPage = 'landing';
-        console.log('Fallback to landing');
-    }
-
-    // Muat state penuh
-    const fullState = localStorage.getItem('courtify_fullState');
-    if (fullState) {
-        try {
-            const parsed = JSON.parse(fullState);
-            for (let key in parsed) {
-                if (parsed[key] !== null && parsed[key] !== undefined) {
-                    currentState[key] = parsed[key];
-                }
-            }
-        } catch (e) {
-            console.error('Failed to parse full state:', e);
-        }
+        
+        currentState.currentPage = pageId;
+        
+        // Update URL tanpa reload
+        window.history.pushState({page: pageId}, '', `?page=${pageId}`);
+        
+        // Update navbar
+        updateNavActiveState(pageId);
+        
+        // Lakukan action khusus per halaman
+        handlePageSpecificActions(pageId);
+        
+        // Scroll ke atas
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Simpan state
+        saveState();
+        
+        console.log('✅ Halaman aktif:', pageId);
+        
+        // Terapkan terjemahan
+        setTimeout(() => {
+            applyTranslations();
+        }, 50);
+        
+        // Sembunyikan loading setelah halaman dimuat
+        setTimeout(() => {
+            hideLoading();
+        }, 300);
     }
 }
-            function selectCourt(courtType) {
-                const selectElement = document.getElementById('lapangan');
-                selectElement.value = courtType;
-                currentState.selectedCourt = courtType;
 
-                // 🔥 SET TANGGAL KE HARI INI SECARA OTOMATIS
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('tanggal').value = today;
-                loadSlots(); // Refresh slot berdasarkan hari ini
+function getPageName(pageId) {
+    const pageNames = {
+        'landing': 'Beranda',
+        'daftar': 'Lapangan',
+        'booking': 'Booking',
+        'invoice': 'Invoice',
+        'history': 'Riwayat',
+        'team': 'Tim',
+        'adminPanel': 'Admin Panel'
+    };
+    return pageNames[pageId] || 'Halaman';
+}
 
-                updatePrice();
-                showPage('booking');
-                showToast('Lapangan berhasil dipilih!', 'success');
+function updateNavActiveState(pageId) {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    let targetNav = null;
+    
+    switch(pageId) {
+        case 'landing':
+            targetNav = document.querySelector('.nav-link[onclick*="landing"]');
+            break;
+        case 'daftar':
+        case 'booking':
+        case 'invoice':
+            targetNav = document.querySelector('.nav-link[onclick*="daftar"]');
+            break;
+        case 'history':
+            targetNav = document.querySelector('.nav-link[onclick*="history"]');
+            break;
+        case 'team':
+            targetNav = document.querySelector('.nav-link[onclick*="team"]');
+            break;
+        case 'adminPanel':
+            targetNav = document.querySelector('.nav-link[onclick*="showAdminLogin"]');
+            break;
+    }
+    
+    if (targetNav) {
+        targetNav.classList.add('active');
+    }
+}
+
+function handlePageSpecificActions(pageId) {
+    console.log('🔄 Handling page actions for:', pageId);
+    switch(pageId) {
+        case 'history':
+            setTimeout(() => loadHistory(), 300);
+            break;
+        case 'adminPanel':
+            if (checkAdminAuth()) {
+                setTimeout(() => loadAdminData(), 100);
+            } else {
+                showAdminLogin();
+                showPage('landing');
             }
-
-            function updatePrice() {
-                const select = document.getElementById('lapangan');
-                const price = select.options[select.selectedIndex]?.dataset.price || 0;
-                const duration = document.getElementById('durasi').value;
+            break;
+        case 'booking':
+            setTimeout(() => {
+                console.log('🛠️ Setting up booking form...');
+                loadSlots();
                 
-                // Update display
-                document.getElementById('biaya-lapangan').textContent = formatCurrency(price);
-                document.getElementById('durasi-text').textContent = `${duration} menit`;
-                
-                // Calculate total
-                calculateTotal();
-            }
-
-            function calculateTotal() {
-                const select = document.getElementById('lapangan');
-                const price = parseInt(select.options[select.selectedIndex]?.dataset.price || 0);
-                const duration = parseInt(document.getElementById('durasi').value);
-                const selectedSlot = currentState.selectedSlot;
-                
-                let total = (price * duration) / 60;
-                
-                // Peak hour surcharge (18:00 - 22:00)
-                if (selectedSlot) {
-                    const hour = parseInt(selectedSlot.split(':')[0]);
-                    if (hour >= 18 && hour < 22) {
-                        const peakSurcharge = total * 0.2; // 20% surcharge
-                        total += peakSurcharge;
-                        document.getElementById('peak-hour').textContent = formatCurrency(peakSurcharge);
-                    } else {
-                        document.getElementById('peak-hour').textContent = 'Rp 0';
-                    }
-                }
-                
-                // Update total
-                document.getElementById('total-harga').textContent = formatCurrency(total);
-            }
-
-            function loadSlots() {
-                const date = document.getElementById('tanggal').value;
-                const slotsContainer = document.getElementById('slots');
-                slotsContainer.innerHTML = '';
-                
-                // Generate time slots from 08:00 to 24:00
-                for (let hour = 6; hour <= 24; hour++) {
-                    const slot = document.createElement('div');
-                    const time = `${hour.toString().padStart(2, '0')}:00`;
-                    
-                    // Check if slot is booked
-                    const isBooked = checkIfBooked(date, time);
-                    const isPast = checkIfPast(date, time);
-                    
-                    if (isPast) {
-                        slot.className = 'slot unavailable';
-                        slot.textContent = time;
-                        slot.title = 'Waktu telah lewat';
-                    } else if (isBooked) {
-                        slot.className = 'slot booked';
-                        slot.textContent = time;
-                        slot.title = 'Sudah dibooking';
-                    } else {
-                        slot.className = 'slot available';
-                        slot.textContent = time;
-                        slot.onclick = () => selectTimeSlot(slot, time);
-                        slot.title = 'Tersedia untuk booking';
-                    }
-                    
-                    slotsContainer.appendChild(slot);
-                }
-            }
-
-            function selectTimeSlot(element, time) {
-                // Remove selected class from all slots
-                document.querySelectorAll('.slot').forEach(s => {
-                    s.classList.remove('selected');
-                });
-                
-                // Add selected class to clicked slot
-                element.classList.add('selected');
-                currentState.selectedSlot = time;
-                
-                // Recalculate total with peak hour check
-                calculateTotal();
-                
-                showToast(`Jam ${time} dipilih`, 'info');
-            }
-
-            function checkIfBooked(date, time) {
-                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                return bookings.some(booking => 
-                    booking.date === date && 
-                    booking.time === time &&
-                    booking.status !== 'cancelled'
-                );
-            }
-
-            function checkIfPast(date, time) {
-                const now = new Date();
-                const bookingDate = new Date(`${date}T${time}`);
-                return bookingDate < now;
-            }
-
-            function validateEmail() {
-                const email = document.getElementById('email').value;
-                const isValid = email.endsWith('@gmail.com');
-                const errorElement = document.getElementById('email-error');
-                
-                if (email && !isValid) {
-                    errorElement.style.display = 'block';
-                    return false;
+                // Jika ada selectedCourt (dari pilih lapangan)
+                if (currentState.selectedCourt) {
+                    console.log('✅ Memulihkan selectedCourt:', currentState.selectedCourt);
+                    setupBookingForm();
                 } else {
-                    errorElement.style.display = 'none';
-                    return true;
+                    console.log('ℹ️ Tidak ada selectedCourt, reset form');
+                    resetBookingForm();
+                }
+            }, 200);
+            break;
+        case 'invoice':
+            const tempData = localStorage.getItem('tempInvoiceData');
+            if (tempData) {
+                try {
+                    currentState.bookingData = JSON.parse(tempData);
+                    setTimeout(() => updateInvoice(currentState.bookingData), 100);
+                } catch(e) {
+                    console.error('Failed to load invoice data:', e);
                 }
             }
+            break;
+    }
+}
 
-            function processBooking() {
-    const nama = document.getElementById('nama').value.trim();
-    const wa = document.getElementById('wa').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const tanggal = document.getElementById('tanggal').value;
-    const lapangan = document.getElementById('lapangan').value;
-    const durasi = document.getElementById('durasi').value;
-    const pesan = document.getElementById('pesan').value.trim();
-    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+// 3. FUNGSI STATE MANAGEMENT
+function saveState() {
+    localStorage.setItem('courtify_currentPage', currentState.currentPage);
+    localStorage.setItem('courtify_fullState', JSON.stringify(currentState));
+}
+
+function loadState() {
+    console.log('Memuat state...');
+    
+    try {
+        // 1. Cek URL parameter (?page=)
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        
+        if (pageParam && PAGES.includes(pageParam) && document.getElementById(pageParam)) {
+            currentState.currentPage = pageParam;
+            console.log('✅ State dari URL:', pageParam);
+            return;
+        }
+        
+        // 2. Cek localStorage
+        const savedPage = localStorage.getItem('courtify_currentPage');
+        
+        if (savedPage && PAGES.includes(savedPage) && document.getElementById(savedPage)) {
+            currentState.currentPage = savedPage;
+            console.log('✅ State dari storage:', savedPage);
+        } else {
+            currentState.currentPage = 'landing';
+            console.log('⚠️ State default: landing');
+        }
+        
+        // 3. Load full state
+        const fullState = localStorage.getItem('courtify_fullState');
+        if (fullState) {
+            const parsed = JSON.parse(fullState);
+            Object.assign(currentState, parsed);
+        }
+        
+    } catch (error) {
+        console.error('Error loading state:', error);
+        currentState.currentPage = 'landing';
+    }
+}
+
+// 4. FUNGSI BOOKING FORM
+function setupBookingForm() {
+    const lapanganSelect = document.getElementById('lapangan');
+    const tanggalInput = document.getElementById('tanggal');
+    
+    // Set nilai lapangan jika ada selectedCourt
+    if (lapanganSelect && currentState.selectedCourt) {
+        lapanganSelect.value = currentState.selectedCourt;
+        console.log('✅ Lapangan di-set ke:', currentState.selectedCourt);
+    }
+    
+    // Set tanggal minimum ke hari ini
+    if (tanggalInput) {
+        const today = new Date().toISOString().split('T')[0];
+        tanggalInput.min = today;
+        
+        // Jika belum ada nilai, set ke hari ini
+        if (!tanggalInput.value) {
+            tanggalInput.value = today;
+        }
+        
+        // Load slots
+        loadSlots();
+    }
+    
+    // Update harga
+    updatePrice();
+}
+
+function resetBookingForm() {
+    console.log('Reset form booking...');
+    
+    // Reset semua field
+    document.getElementById('bookingForm').reset();
+    
+    // Set tanggal ke hari ini
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('tanggal').value = today;
+    document.getElementById('tanggal').min = today;
+    
+    // Reset file upload
+    document.getElementById('fileName').innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
+    document.getElementById('previewContainer').classList.add('d-none');
+    document.getElementById('paymentProof').value = '';
+    
+    // Reset slot
+    currentState.selectedSlot = null;
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    
+    // Reset payment method
+    document.getElementById('bankTransfer').checked = true;
+    document.querySelectorAll('.payment-instruction').forEach(div => div.classList.add('d-none'));
+    document.getElementById('bankInstructions').classList.remove('d-none');
+    
+    // Update UI
+    loadSlots();
+    updatePrice();
+    
+    // Hapus data form dari localStorage
+    localStorage.removeItem('bookingFormData');
+    
+    // Update waktu reset
+    currentState.lastFormReset = Date.now();
+    saveState();
+    
+    console.log('✅ Form direset');
+}
+
+// 5. FUNGSI SLOTS
+function loadSlots() {
+    const date = document.getElementById('tanggal').value;
+    const slotsContainer = document.getElementById('slots');
+    if (!slotsContainer) return;
+    
+    slotsContainer.innerHTML = '';
+    
+    for (let hour = 6; hour <= 24; hour++) {
+        const slot = document.createElement('div');
+        const time = `${hour.toString().padStart(2, '0')}:00`;
+        
+        const isBooked = checkIfBooked(date, time);
+        const isPast = checkIfPast(date, time);
+        
+        if (isPast) {
+            slot.className = 'slot unavailable';
+            slot.textContent = time;
+            slot.title = 'Waktu telah lewat';
+        } else if (isBooked) {
+            slot.className = 'slot booked';
+            slot.textContent = time;
+            slot.title = 'Sudah dibooking';
+        } else {
+            slot.className = 'slot available';
+            slot.textContent = time;
+            slot.onclick = () => selectTimeSlot(slot, time);
+            slot.title = 'Tersedia untuk booking';
+        }
+        
+        slotsContainer.appendChild(slot);
+    }
+}
+
+function selectTimeSlot(element, time) {
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    element.classList.add('selected');
+    currentState.selectedSlot = time;
+    calculateTotal();
+    showToast(`Jam ${time} dipilih`, 'info');
+}
+
+function checkIfBooked(date, time) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    return bookings.some(booking => 
+        booking.tanggal === date && 
+        booking.waktu === time &&
+        booking.status !== 'cancelled'
+    );
+}
+
+function checkIfPast(date, time) {
+    const now = new Date();
+    const bookingDate = new Date(`${date}T${time}`);
+    return bookingDate < now;
+}
+
+// 6. FUNGSI PROSES BOOKING
+function processBooking() {
+    console.log('🚀 processBooking() dipanggil');
+    showLoading('Memproses booking...');
+    
+    // Validasi form
+    if (!validateBookingForm()) {
+        console.log('❌ Validasi form gagal');
+        hideLoading();
+        return;
+    }
+    
+    const formData = collectBookingFormData();
+    console.log('📋 Form data:', formData);
+    
     const paymentProofInput = document.getElementById('paymentProof');
-
-    if (!nama || !wa || !email || !tanggal || !lapangan || !durasi || !currentState.selectedSlot) {
-        showToast('Harap lengkapi semua data!', 'error');
-        return;
-    }
-    if (!validateEmail()) {
-        showToast('Email harus @gmail.com', 'error');
-        return;
-    }
-    if (!paymentMethodElement) {
-        showToast('Harap pilih metode pembayaran!', 'error');
-        return;
-    }
+    
     if (!paymentProofInput.files[0]) {
+        console.log('❌ Bukti transfer belum diupload');
         showToast('Harap upload bukti transfer!', 'error');
+        hideLoading();
         return;
     }
-
-    const paymentMethod = paymentMethodElement.value;
+    
     const file = paymentProofInput.files[0];
+    console.log('📁 File:', file.name, file.size);
+    
     const reader = new FileReader();
+    
     reader.onload = function(e) {
+        console.log('✅ File berhasil dibaca');
+        
         const bookingData = {
             id: generateBookingId(),
-            nama,
-            wa,
-            email,
-            tanggal,
-            lapangan,
-            durasi,
-            waktu: currentState.selectedSlot,
-            pesan,
-            paymentMethod: getPaymentMethodText(paymentMethod),
-            paymentMethodCode: paymentMethod,
+            ...formData,
             paymentProof: e.target.result,
             fileName: file.name,
             fileSize: file.size,
@@ -3783,317 +3415,608 @@ function loadState() {
             status: 'pending',
             createdAt: new Date().toISOString()
         };
-
-        // 🔥 SIMPAN KE LOCALSTORAGE AGAR BISA DIPULIHKAN SAAT REFRESH
+        
+        console.log('📊 Booking data:', bookingData);
+        
+        // Simpan data sementara
         localStorage.setItem('tempInvoiceData', JSON.stringify(bookingData));
-
         currentState.bookingData = bookingData;
+        
+        // Tampilkan invoice
         updateInvoice(bookingData);
         showPage('invoice');
+        
+        // Update statistik
+        updateStats();
+        
         showToast('Booking berhasil diproses!', 'success');
+        hideLoading();
     };
+    
+    reader.onerror = function(e) {
+        console.error('❌ Gagal membaca file:', e);
+        showToast('Gagal membaca file bukti transfer!', 'error');
+        hideLoading();
+    };
+    
     reader.readAsDataURL(file);
 }
 
-            function updateInvoice(bookingData) {
-                    document.getElementById('invoice-number').textContent = bookingData.id;
-                    document.getElementById('invoice-nama').textContent = bookingData.nama;
-                    document.getElementById('invoice-lapangan').textContent = getCourtName(bookingData.lapangan);
-                    document.getElementById('invoice-waktu').textContent = `${bookingData.tanggal} ${bookingData.waktu}`;
-                    document.getElementById('invoice-durasi').textContent = `${bookingData.durasi} menit`;
-                    document.getElementById('invoice-total').textContent = formatCurrency(bookingData.total);
-                    document.getElementById('booking-code').textContent = bookingData.id;
-                    
-                    // Tambahkan informasi pembayaran di invoice
-                    const invoiceDetails = document.querySelector('.invoice-details');
-                    const paymentInfo = document.createElement('div');
-                    paymentInfo.className = 'invoice-item';
-                    paymentInfo.innerHTML = `
-                        <span>Metode Pembayaran:</span>
-                        <span class="badge badge-info">${bookingData.paymentMethod}</span>
-                    `;
-                    
-                    // Cari posisi untuk memasukkan info pembayaran (setelah durasi)
-                    const durationItem = document.querySelector('.invoice-item:nth-child(4)');
-                    if (durationItem) {
-                        durationItem.insertAdjacentElement('afterend', paymentInfo);
-                    }
-                }
+function validateBookingForm() {
+    const fields = ['nama', 'wa', 'email', 'tanggal', 'lapangan', 'durasi'];
+    const errors = [];
+    
+    fields.forEach(field => {
+        const element = document.getElementById(field);
+        if (!element || !element.value.trim()) {
+            errors.push(`${field} harus diisi`);
+        }
+    });
+    
+    if (!currentState.selectedSlot) {
+        errors.push('Jam mulai harus dipilih');
+    }
+    
+    if (!validateEmail()) {
+        errors.push('Email harus @gmail.com');
+    }
+    
+    if (errors.length > 0) {
+        showToast(errors.join(', '), 'error');
+        return false;
+    }
+    
+    return true;
+}
 
-            function confirmBooking() {
-                if (!currentState.bookingData) {
-                    showToast('Data booking tidak ditemukan!', 'error');
-                    return;
-                }
-                
-                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                bookings.push(currentState.bookingData);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
-                updateStats();
-                
-                
-                // Prepare WhatsApp message dengan detail pembayaran
-                const message = `Halo Admin Courtify!%0A%0A` +
-                                `Saya ingin mengonfirmasi booking dengan detail sebagai berikut:%0A%0A` +
-                                `*KODE BOOKING*: ${currentState.bookingData.id}%0A` +
-                                `*NAMA*: ${currentState.bookingData.nama}%0A` +
-                                `*WHATSAPP*: ${currentState.bookingData.wa}%0A` +
-                                `*EMAIL*: ${currentState.bookingData.email}%0A` +
-                                `*LAPANGAN*: ${getCourtName(currentState.bookingData.lapangan)}%0A` +
-                                `*TANGGAL*: ${currentState.bookingData.tanggal}%0A` +
-                                `*WAKTU*: ${currentState.bookingData.waktu}%0A` +
-                                `*DURASI*: ${currentState.bookingData.durasi} menit%0A` +
-                                `*TOTAL*: ${formatCurrency(currentState.bookingData.total)}%0A%0A` +
-                                `*METODE PEMBAYARAN*%0A` +
-                                `• Metode: ${currentState.bookingData.paymentMethod}%0A` +
-                                `• Bukti TF: ${currentState.bookingData.fileName} (${(currentState.bookingData.fileSize/1024).toFixed(1)} KB)%0A%0A` +
-                                `${currentState.bookingData.pesan ? `💬 *PESAN TAMBAHAN*%0A${currentState.bookingData.pesan}%0A%0A` : ''}` +
-                                `Silakan verifikasi pembayaran dan konfirmasi booking saya. Terima kasih!`;
-                
-                const phoneNumber = '62881023570416';
-                window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-                
-                showToast('Booking berhasil dikirim ke WhatsApp!', 'success');
-                
-                resetBookingForm();
-                showPage('landing');
-                localStorage.removeItem('tempInvoiceData');
+function collectBookingFormData() {
+    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+    
+    return {
+        nama: document.getElementById('nama').value.trim(),
+        wa: document.getElementById('wa').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        tanggal: document.getElementById('tanggal').value,
+        lapangan: document.getElementById('lapangan').value,
+        durasi: document.getElementById('durasi').value,
+        waktu: currentState.selectedSlot,
+        pesan: document.getElementById('pesan').value.trim(),
+        paymentMethod: getPaymentMethodText(paymentMethodElement?.value || 'bank_transfer'),
+        paymentMethodCode: paymentMethodElement?.value || 'bank_transfer'
+    };
+}
+
+// 7. FUNGSI UTILITAS
+function formatCurrency(amount) {
+    return 'Rp ' + amount.toLocaleString('id-ID');
+}
+
+function generateBookingId() {
+    return 'CTF-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+}
+
+function getCourtName(courtType) {
+    const courts = {
+        'badminton': 'Badminton',
+        'futsal': 'Futsal',
+        'basket': 'Basket',
+        'padel': 'Padel Tennis'
+    };
+    return courts[courtType] || 'Unknown Court';
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'pending': 'badge-warning',
+        'confirmed': 'badge-info',
+        'completed': 'badge-success',
+        'cancelled': 'badge-danger'
+    };
+    return classes[status] || 'badge-secondary';
+}
+
+function getStatusText(status) {
+    const texts = {
+        'pending': 'Menunggu',
+        'confirmed': 'Dikonfirmasi',
+        'completed': 'Selesai',
+        'cancelled': 'Dibatalkan'
+    };
+    return texts[status] || 'Unknown';
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} 
+            me-3" style="color: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent)'}"></i>
+            <div class="text-readable">${message}</div>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+function getPaymentMethodText(method) {
+    const methods = {
+        'bank_transfer': 'Transfer Bank',
+        'e_wallet': 'E-Wallet',
+        'virtual_account': 'Virtual Account'
+    };
+    return methods[method] || 'Unknown';
+}
+
+function validateEmail() {
+    const email = document.getElementById('email').value;
+    const isValid = email.endsWith('@gmail.com');
+    const errorElement = document.getElementById('email-error');
+    
+    if (email && !isValid) {
+        if (errorElement) errorElement.style.display = 'block';
+        return false;
+    } else {
+        if (errorElement) errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+// 8. FUNGSI LANGUAGE
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('courtify_lang', lang);
+    applyTranslations();
+    
+    const dropdownToggle = document.querySelector('#languageDropdown');
+    if (dropdownToggle) {
+        const icon = dropdownToggle.querySelector('i').cloneNode(true);
+        dropdownToggle.innerHTML = '';
+        dropdownToggle.appendChild(icon);
+        dropdownToggle.appendChild(document.createTextNode(lang === 'id' ? ' Bahasa' : ' Language'));
+    }
+    
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        if (item.textContent.includes('🇮🇩')) {
+            item.textContent = lang === 'id' ? '✅ 🇮🇩 Indonesia' : '🇮🇩 Indonesia';
+        }
+        if (item.textContent.includes('🇬🇧')) {
+            item.textContent = lang === 'en' ? '✅ 🇬🇧 English' : '🇬🇧 English';
+        }
+    });
+    
+    showToast(lang === 'id' ? 'Bahasa diubah ke Indonesia' : 'Language changed to English', 'success');
+}
+
+function applyTranslations() {
+    const langData = translations[currentLang];
+    if (!langData) return;
+    
+    // Terjemahkan elemen dengan data-translate
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (langData[key]) {
+            element.textContent = langData[key];
+        }
+    });
+    
+    // Terjemahkan placeholder
+    document.querySelectorAll('[data-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-placeholder');
+        if (langData[key]) {
+            element.placeholder = langData[key];
+        }
+    });
+    
+    // Update title
+    document.title = currentLang === 'id' ? 'Courtify - Booking Lapangan Olahraga' : 'Courtify - Sports Court Booking';
+}
+
+// 9. FUNGSI INITIALIZATION
+function initApp() {
+    console.log('=== COURTIFY INITIALIZATION STARTED ===');
+    
+    try {
+        // 1. Load state terlebih dahulu
+        loadState();
+        
+        // 2. Setup form date
+        const tanggalInput = document.getElementById('tanggal');
+        if (tanggalInput) {
+            const today = new Date().toISOString().split('T')[0];
+            tanggalInput.min = today;
+            if (!tanggalInput.value) {
+                tanggalInput.value = today;
             }
+        }
+        
+        // 3. Setup event listeners
+        setupEventListeners();
+        
+        // 4. Tampilkan halaman yang sesuai
+        setTimeout(() => {
+            showPage(currentState.currentPage);
+            console.log('✅ Current page:', currentState.currentPage);
+        }, 100);
+        
+        // 5. Terapkan terjemahan
+        setTimeout(() => {
+            applyTranslations();
+        }, 200);
+        
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showPage('landing');
+    }
+    
+    console.log('=== COURTIFY INITIALIZATION COMPLETE ===');
+}
 
-            function loadHistory() {
-                const historyList = document.getElementById('historyList');
-                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                
-                if (bookings.length === 0) {
-                    historyList.innerHTML = `
-                        <div class="text-center py-5">
-                            <i class="fas fa-history fa-4x mb-3" style="color: var(--accent); opacity: 0.5;"></i>
-                            <h4 class="text-readable" data-translate="no_history">Belum ada riwayat booking</h4>
-                            <p class="text-muted text-readable" data-translate="no_history_desc">Mulai booking lapangan pertama Anda!</p>
-                            <button class="btn btn-warning mt-3" onclick="showPage('daftar')">
-                                <i class="fas fa-calendar-plus me-2"></i> <span data-translate="book_now_btn">Booking Sekarang</span>
-                            </button>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let filteredBookings = bookings;
-                if (currentState.filterStatus !== 'all') {
-                    filteredBookings = bookings.filter(b => b.status === currentState.filterStatus);
-                }
-                
-                const startIndex = 0;
-                const endIndex = Math.min(currentState.historyItems, filteredBookings.length);
-                const pageBookings = filteredBookings.slice(startIndex, endIndex);
-                
-                historyList.innerHTML = '';
-                
-                pageBookings.forEach(booking => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'history-item';
-                    historyItem.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="badge ${getStatusBadgeClass(booking.status)} me-2">
-                                        ${getStatusText(booking.status)}
-                                    </span>
-                                    <span class="text-muted small">${booking.id}</span>
-                                </div>
-                                <h5 class="mb-2 text-readable">${getCourtName(booking.lapangan)}</h5>
-                                <p class="mb-2 text-readable"><i class="fas fa-user me-2"></i>${booking.nama}</p>
-                                <div class="d-flex flex-wrap gap-3 text-readable">
-                                    <small><i class="far fa-calendar me-1"></i>${booking.tanggal}</small>
-                                    <small><i class="far fa-clock me-1"></i>${booking.waktu} (${booking.durasi} menit)</small>
-                                    <small><i class="fas fa-phone me-1"></i>${booking.wa}</small>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fs-4 fw-bold" style="color: var(--accent);">
-                                    ${formatCurrency(booking.total)}
-                                </div>
-                                <button class="btn btn-sm btn-outline-light mt-2" onclick="viewBookingHistoryDetail('${booking.id}')">
-                                    <i class="fas fa-eye me-1"></i> Detail
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    historyList.appendChild(historyItem);
-                });
-                
-                const loadMoreBtn = document.getElementById('load-more-btn');
-                if (endIndex < filteredBookings.length) {
-                    loadMoreBtn.style.display = 'inline-block';
-                } else {
-                    loadMoreBtn.style.display = 'none';
-                }
+function setupEventListeners() {
+    // Email validation
+    const emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('input', validateEmail);
+    }
+    
+    // Form field changes
+    document.getElementById('lapangan')?.addEventListener('change', updatePrice);
+    document.getElementById('durasi')?.addEventListener('change', calculateTotal);
+    document.getElementById('tanggal')?.addEventListener('change', loadSlots);
+    
+    // Payment method change
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-instruction').forEach(div => {
+                div.classList.add('d-none');
+            });
+            
+            const method = this.value;
+            if (method === 'bank_transfer') {
+                document.getElementById('bankInstructions').classList.remove('d-none');
+            } else if (method === 'e_wallet') {
+                document.getElementById('ewalletInstructions').classList.remove('d-none');
+            } else if (method === 'virtual_account') {
+                document.getElementById('vaInstructions').classList.remove('d-none');
             }
+        });
+    });
 
-            function loadMoreHistory() {
-                currentState.historyItems += 5;
-                loadHistory();
+    // Tambahkan di fungsi setupEventListeners():
+    // Event listener untuk tombol proses booking
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.closest('.btn-success') && e.target.closest('.btn-success').textContent.includes('Lanjutkan ke Pembayaran')) {
+            e.preventDefault();
+            processBooking();
+        }
+    });
+
+    // Atau lebih spesifik:
+    document.querySelector('button[onclick*="processBooking"]')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        processBooking();
+    });
+    
+    // File upload
+    document.getElementById('paymentProof')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const fileNameDiv = document.getElementById('fileName');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        
+        if (file) {
+            // Validasi file
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('File terlalu besar! Maksimal 5MB.', 'error');
+                this.value = '';
+                return;
             }
-
-            function filterHistory(status) {
-                currentState.filterStatus = status;
-                currentState.historyItems = 5;
-                loadHistory();
+            
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            if (!validTypes.includes(file.type)) {
+                showToast('Format file tidak didukung!', 'error');
+                this.value = '';
+                return;
             }
-
-            function resetHistory() {
-                if (confirm('Apakah Anda yakin ingin mereset semua data booking?')) {
-                    localStorage.removeItem('bookings');
-                    currentState.historyItems = 5;
-                    loadHistory();
-                    updateStats();
-                    showToast('Data booking telah direset', 'info');
-                }
-            }
-
-
-            function resetBookingForm() {
-                document.getElementById('bookingForm').reset();
-                document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
-                document.getElementById('fileName').innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
-                document.getElementById('previewContainer').classList.add('d-none');
-                currentState.selectedSlot = null;
-                
-                // Reset payment method ke default (Transfer Bank)
-                    document.getElementById('bankTransfer').checked = true;
-                    document.querySelectorAll('.payment-instruction').forEach(div => div.classList.add('d-none'));
-                    document.getElementById('bankInstructions').classList.remove('d-none');
-                
-                loadSlots();
-                updatePrice();
-            }
-
-            // Fungsi untuk generate QR code (memerlukan library QRCode.js)
-            function showQRCodePayment(paymentData) {
-                // Contoh untuk Virtual Account
-                const qrData = {
-                    bank: 'BCA',
-                    vaNumber: '888880123456789',
-                    amount: paymentData.total,
-                    merchant: 'Courtify'
+            
+            // Update UI
+            fileNameDiv.innerHTML = `
+                <small class="text-success">
+                    <i class="fas fa-check-circle me-1"></i>
+                    ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                </small>
+            `;
+            
+            // Show preview
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove('d-none');
+                    previewContainer.classList.remove('d-none');
                 };
-                
-                // Tampilkan QR code di modal atau di halaman invoice
-                showToast('QR Code tersedia untuk pembayaran via e-wallet', 'info');
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.classList.add('d-none');
+                previewContainer.classList.remove('d-none');
             }
+        } else {
+            fileNameDiv.innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
+            previewContainer.classList.add('d-none');
+        }
+    });
 
-            function printInvoice() {
-                window.print();
-            }
+    const proofModal = document.getElementById('proofModal');
+    if (proofModal) {
+        proofModal.addEventListener('hidden.bs.modal', function() {
+            // Kosongkan konten modal saat ditutup
+            document.getElementById('proofModalContent').innerHTML = '';
+        });
+    }
 
-            function updateStats() {
-                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                const completedBookings = bookings.filter(b => b.status === 'completed').length;
-                
-                document.getElementById('total-bookings').textContent = bookings.length;
-                document.getElementById('booking-success').textContent = 
-                    bookings.length > 0 ? Math.round((completedBookings / bookings.length) * 100) + '%' : '0%';
-            }
+    document.getElementById('proceedPaymentBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('🔘 Tombol Lanjutkan Pembayaran diklik');
+        processBooking();
+    });
+    
+    // Handle browser back/forward
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.page) {
+            showPage(event.state.page);
+        }
+    });
+}
 
-            // Utility Functions
-            function formatCurrency(amount) {
-                return 'Rp ' + amount.toLocaleString('id-ID');
-            }
+// 10. INISIALISASI SAAT DOM READY
+document.addEventListener('DOMContentLoaded', function() {
+    // Set language from storage
+    currentLang = localStorage.getItem('courtify_lang') || 'id';
+    
+    // Initialize the app
+    initApp();
+    
+    // Setup language dropdown
+    const dropdownToggle = document.querySelector('#languageDropdown');
+    if (dropdownToggle) {
+        const icon = dropdownToggle.querySelector('i').cloneNode(true);
+        dropdownToggle.innerHTML = '';
+        dropdownToggle.appendChild(icon);
+        dropdownToggle.appendChild(document.createTextNode(currentLang === 'id' ? ' Bahasa' : ' Language'));
+    }
+});
 
-            function formatDate(date) {
-                return date.toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            }
-
-            function generateBookingId() {
-                return 'CTF-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            }
-
-            function getCourtName(courtType) {
-                const courts = {
-                    'badminton': 'Badminton Court',
-                    'futsal': 'Futsal Field',
-                    'basket': 'Basketball Court',
-                    'padel': 'Padel Tennis Court'
-                };
-                return courts[courtType] || 'Unknown Court';
-            }
-
-            function getStatusBadgeClass(status) {
-                const classes = {
-                    'pending': 'badge-warning',
-                    'confirmed': 'badge-info',
-                    'completed': 'badge-success',
-                    'cancelled': 'badge-danger'
-                };
-                return classes[status] || 'badge-secondary';
-            }
-
-            function getStatusText(status) {
-                const texts = {
-                    'pending': 'Menunggu',
-                    'confirmed': 'Dikonfirmasi',
-                    'completed': 'Selesai',
-                    'cancelled': 'Dibatalkan'
-                };
-                return texts[status] || 'Unknown';
-            }
-
-            function showToast(message, type = 'info') {
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} 
-                        me-3" style="color: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--accent)'}"></i>
-                        <div class="text-readable">${message}</div>
-                    </div>
-                `;
-                
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateY(20px)';
-                    setTimeout(() => toast.remove(), 300);
-                }, 5000);
-            }
-
-            function saveToStorage() {
-                localStorage.setItem('courtifyState', JSON.stringify(currentState));
-            }
-
-            // GANTI fungsi loadFromStorage() dengan yang ini:
-            function loadFromStorage() {
-                // Fungsi ini hanya untuk load data lain, bukan untuk set halaman
-                const saved = localStorage.getItem('courtifyState');
-                if (saved) {
-                    try {
-                        const parsed = JSON.parse(saved);
-                        // Gabungkan dengan currentState tapi jangan overwrite currentPage
-                        currentState = {
-                            ...parsed,
-                            currentPage: currentState.currentPage // Jaga currentPage dari loadState
-                        };
-                    } catch (e) {
-                        console.error('Error loading from storage:', e);
-                    }
-                }
-            }
-
-            // Fungsi untuk melihat detail booking di history (PERBAIKI NAMA FUNGSI)
-function viewBookingHistoryDetail(bookingId) {
-    console.log('viewBookingHistoryDetail called with ID:', bookingId); // Debug
+function confirmBooking() {
+    if (!currentState.bookingData) {
+        showToast('Data booking tidak ditemukan!', 'error');
+        return;
+    }
+    
+    showLoading('Menyimpan booking...');
     
     const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    console.log('Total bookings:', bookings.length); // Debug
+    bookings.push(currentState.bookingData);
+    localStorage.setItem('bookings', JSON.stringify(bookings));
     
+    // Update statistik
+    updateStats();
+    
+    // Prepare WhatsApp message
+    const message = createWhatsAppMessage(currentState.bookingData);
+    const phoneNumber = '6281219958750';
+    
+    // Buka WhatsApp
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    
+    showToast('Booking berhasil dikirim ke WhatsApp!', 'success');
+    
+    // Reset dan kembali ke halaman utama
+    resetBookingForm();
+    localStorage.removeItem('tempInvoiceData');
+    currentState.bookingData = null;
+    currentState.selectedCourt = null;
+    currentState.selectedSlot = null;
+    
+    showPage('landing');
+    hideLoading();
+}
+
+function createWhatsAppMessage(bookingData) {
+    return `Halo Admin Courtify!%0A%0A` +
+           `Saya ingin mengonfirmasi booking dengan detail sebagai berikut:%0A%0A` +
+           `*KODE BOOKING*: ${bookingData.id}%0A` +
+           `*NAMA*: ${bookingData.nama}%0A` +
+           `*WHATSAPP*: ${bookingData.wa}%0A` +
+           `*EMAIL*: ${bookingData.email}%0A` +
+           `*LAPANGAN*: ${getCourtName(bookingData.lapangan)}%0A` +
+           `*TANGGAL*: ${bookingData.tanggal}%0A` +
+           `*WAKTU*: ${bookingData.waktu}%0A` +
+           `*DURASI*: ${bookingData.durasi} menit%0A` +
+           `*TOTAL*: ${formatCurrency(bookingData.total)}%0A%0A` +
+           `*METODE PEMBAYARAN*%0A` +
+           `• Metode: ${bookingData.paymentMethod}%0A` +
+           `• Bukti TF: ${bookingData.fileName} (${(bookingData.fileSize/1024).toFixed(1)} KB)%0A%0A` +
+           `${bookingData.pesan ? `💬 *PESAN TAMBAHAN*%0A${bookingData.pesan}%0A%0A` : ''}` +
+           `Silakan verifikasi pembayaran dan konfirmasi booking saya. Terima kasih!`;
+}
+
+function loadHistory() {
+    const historyList = document.getElementById('historyList');
+    if (!historyList) return;
+    
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    if (bookings.length === 0) {
+        historyList.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-history fa-4x mb-3" style="color: var(--accent); opacity: 0.5;"></i>
+                <h4 class="text-readable" data-translate="no_history">Belum ada riwayat booking</h4>
+                <p class="text-muted text-readable" data-translate="no_history_desc">Mulai booking lapangan pertama Anda!</p>
+                <button class="btn btn-warning mt-3" onclick="showPage('daftar')">
+                    <i class="fas fa-calendar-plus me-2"></i> <span data-translate="book_now_btn">Booking Sekarang</span>
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    let filteredBookings = bookings;
+    if (currentState.filterStatus !== 'all') {
+        filteredBookings = bookings.filter(b => b.status === currentState.filterStatus);
+    }
+    
+    const startIndex = 0;
+    const endIndex = Math.min(currentState.historyItems, filteredBookings.length);
+    const pageBookings = filteredBookings.slice(startIndex, endIndex);
+    
+    historyList.innerHTML = '';
+    
+    pageBookings.forEach(booking => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge ${getStatusBadgeClass(booking.status)} me-2">
+                            ${getStatusText(booking.status)}
+                        </span>
+                        <span class="text-muted small">${booking.id}</span>
+                    </div>
+                    <h5 class="mb-2 text-readable">${getCourtName(booking.lapangan)}</h5>
+                    <p class="mb-2 text-readable"><i class="fas fa-user me-2"></i>${booking.nama}</p>
+                    <div class="d-flex flex-wrap gap-3 text-readable">
+                        <small><i class="far fa-calendar me-1"></i>${booking.tanggal}</small>
+                        <small><i class="far fa-clock me-1"></i>${booking.waktu} (${booking.durasi} menit)</small>
+                        <small><i class="fas fa-phone me-1"></i>${booking.wa}</small>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="fs-4 fw-bold" style="color: var(--accent);">
+                        ${formatCurrency(booking.total)}
+                    </div>
+                    <button class="btn btn-sm btn-outline-light mt-2" onclick="viewBookingHistoryDetail('${booking.id}')">
+                        <i class="fas fa-eye me-1"></i> Detail
+                    </button>
+                </div>
+            </div>
+        `;
+        historyList.appendChild(historyItem);
+    });
+    
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        if (endIndex < filteredBookings.length) {
+            loadMoreBtn.style.display = 'inline-block';
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
+    }
+    
+    // Terapkan terjemahan
+    setTimeout(() => applyTranslations(), 100);
+}
+
+function loadMoreHistory() {
+    currentState.historyItems += 5;
+    loadHistory();
+}
+
+function filterHistory(status) {
+    currentState.filterStatus = status;
+    currentState.historyItems = 5;
+    loadHistory();
+}
+
+function resetHistory() {
+    const confirmMsg = currentLang === 'id' 
+        ? 'Apakah Anda yakin ingin mereset semua data booking?' 
+        : 'Are you sure you want to reset all booking data?';
+    
+    if (confirm(confirmMsg)) {
+        localStorage.removeItem('bookings');
+        currentState.historyItems = 5;
+        loadHistory();
+        updateStats();
+        showToast(
+            currentLang === 'id' 
+                ? 'Data booking telah direset' 
+                : 'Booking data has been reset', 
+            'info'
+        );
+    }
+}
+
+function updateStats() {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const completedBookings = bookings.filter(b => b.status === 'completed').length;
+    const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+    const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+    
+    // Total semua booking (semua status kecuali cancelled)
+    const totalActiveBookings = bookings.filter(b => b.status !== 'cancelled').length;
+    
+    // Hitung total pendapatan dari booking yang sudah dikonfirmasi
+    const totalRevenue = bookings
+        .filter(b => b.status === 'confirmed' || b.status === 'completed')
+        .reduce((sum, b) => sum + (b.total || 0), 0);
+    
+    // Update statistik di landing page
+    updateLandingPageStats({
+        totalBookings: totalActiveBookings,
+        completedBookings: completedBookings,
+        confirmedBookings: confirmedBookings,
+        pendingBookings: pendingBookings,
+        totalRevenue: totalRevenue,
+        successRate: bookings.length > 0 ? Math.round((completedBookings / bookings.length) * 100) : 0
+    });
+    
+    // Update juga untuk kompatibilitas dengan kode lama
+    const totalBookingsEl = document.getElementById('total-bookings');
+    const bookingSuccessEl = document.getElementById('booking-success');
+    
+    if (totalBookingsEl) {
+        totalBookingsEl.textContent = totalActiveBookings;
+    }
+    
+    if (bookingSuccessEl) {
+        bookingSuccessEl.textContent = bookings.length > 0 ? Math.round((completedBookings / bookings.length) * 100) + '%' : '0%';
+    }
+}
+
+function updateLandingPageStats(stats) {
+    console.log('📊 Updating landing page stats:', stats);
+    
+    // Update semua card statistik di landing page
+    const statsElements = {
+        'total-bookings': stats.totalBookings,
+        'completed-bookings': stats.completedBookings, // Anda perlu menambahkan ID ini di HTML
+        'confirmed-bookings': stats.confirmedBookings, // Anda perlu menambahkan ID ini di HTML
+        'pending-bookings': stats.pendingBookings, // Anda perlu menambahkan ID ini di HTML
+        'total-revenue': formatCurrency(stats.totalRevenue), // Anda perlu menambahkan ID ini di HTML
+        'booking-success': stats.successRate + '%',
+        'happy-customers': '98%', // Default atau hitung dari rating
+        'available-courts': '4' // Default
+    };
+    
+    // Update setiap elemen
+    Object.entries(statsElements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    });
+}
+
+function viewBookingHistoryDetail(bookingId) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     const booking = bookings.find(b => b.id === bookingId);
-    console.log('Found booking:', booking); // Debug
     
     if (!booking) {
         showToast('Data booking tidak ditemukan!', 'error');
@@ -4177,13 +4100,13 @@ function viewBookingHistoryDetail(bookingId) {
         </div>
     `;
     
-    // Show modal
     const modal = new bootstrap.Modal(document.getElementById('bookingDetailModal'));
     modal.show();
 }
 
-// Fungsi khusus untuk melihat bukti transfer di modal history
 function showBookingProof(bookingId) {
+    console.log('🖼️ Membuka bukti pembayaran untuk:', bookingId);
+    
     const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     const booking = bookings.find(b => b.id === bookingId);
     
@@ -4192,265 +4115,77 @@ function showBookingProof(bookingId) {
         return;
     }
     
+    // Tampilkan loading
+    showLoading('Memuat bukti pembayaran...');
+    
+    // Tutup modal detail booking jika terbuka
+    const detailModal = bootstrap.Modal.getInstance(document.getElementById('bookingDetailModal'));
+    if (detailModal) {
+        detailModal.hide();
+    }
+    
     const modalContent = document.getElementById('proofModalContent');
     modalContent.innerHTML = `
         <div class="text-center">
-            <h5 class="text-warning mb-3">Bukti Pembayaran - ${booking.id}</h5>
-            ${booking.paymentProof.startsWith('data:image/') 
-                ? `<img src="${booking.paymentProof}" 
-                     class="img-fluid rounded border border-secondary" 
-                     style="max-height: 500px;"
-                     alt="Bukti Transfer">`
-                : `<div class="alert alert-info">
-                    <i class="fas fa-file-pdf me-2"></i>
-                    File PDF: ${booking.fileName || 'bukti-transfer.pdf'}
-                   </div>`
-            }
+            <div class="mb-4">
+                <h5 class="text-warning mb-2">${booking.id}</h5>
+                <p class="text-muted mb-0">${booking.nama} - ${getCourtName(booking.lapangan)}</p>
+                <p class="mb-3">
+                    <span class="badge ${booking.status === 'pending' ? 'badge-warning' : 'badge-success'}">
+                        ${booking.status === 'pending' ? 'Menunggu Konfirmasi' : 'Terkonfirmasi'}
+                    </span>
+                </p>
+            </div>
+            
+            <div class="payment-proof-container mb-4">
+                ${booking.paymentProof.startsWith('data:image/') 
+                    ? `<img src="${booking.paymentProof}" 
+                         class="img-fluid rounded border border-secondary" 
+                         style="max-height: 500px; width: auto;"
+                         alt="Bukti Transfer ${booking.id}"
+                         onload="hideLoading()">`
+                    : `<div class="alert alert-info bg-dark border-info">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        File PDF: ${booking.fileName || 'bukti-transfer.pdf'}
+                       </div>`
+                }
+            </div>
+            
+            <div class="booking-info text-start">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Tanggal:</strong> ${booking.tanggal}</p>
+                        <p class="mb-2"><strong>Waktu:</strong> ${booking.waktu}</p>
+                        <p class="mb-2"><strong>Durasi:</strong> ${booking.durasi} menit</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Metode Bayar:</strong> ${booking.paymentMethod || 'Transfer Bank'}</p>
+                        <p class="mb-2"><strong>Total:</strong> ${formatCurrency(booking.total)}</p>
+                        <p class="mb-0"><strong>WhatsApp:</strong> ${booking.wa}</p>
+                    </div>
+                </div>
+                
+                ${booking.pesan ? `
+                <div class="mt-3 p-3 bg-dark rounded">
+                    <strong class="text-warning">Pesan Customer:</strong>
+                    <p class="mb-0 mt-2">"${booking.pesan}"</p>
+                </div>
+                ` : ''}
+            </div>
         </div>
     `;
     
+    // Tampilkan modal bukti
     const proofModal = new bootstrap.Modal(document.getElementById('proofModal'));
     proofModal.show();
-}
-        function printBookingDetail() {
-            window.print();
-        }
-
-
-        // Payment method selection
-        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                // Hide all instructions
-                document.querySelectorAll('.payment-instruction').forEach(div => {
-                    div.classList.add('d-none');
-                });
-                
-                // Show selected instruction
-                const method = this.value;
-                if (method === 'bank_transfer') {
-                    document.getElementById('bankInstructions').classList.remove('d-none');
-                } else if (method === 'e_wallet') {
-                    document.getElementById('ewalletInstructions').classList.remove('d-none');
-                } else if (method === 'virtual_account') {
-                    document.getElementById('vaInstructions').classList.remove('d-none');
-                }
-            });
-        });
-        
-        // File upload preview
-        document.getElementById('paymentProof').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const fileNameDiv = document.getElementById('fileName');
-            const previewContainer = document.getElementById('previewContainer');
-            const previewImage = document.getElementById('previewImage');
-            const pdfPreview = document.getElementById('pdfPreview');
-            const pdfFileName = document.getElementById('pdfFileName');
-            
-            if (file) {
-                // Check file size (max 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast('File terlalu besar! Maksimal 5MB.', 'error');
-                    this.value = '';
-                    return;
-                }
-                
-                // Check file type
-                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-                if (!validTypes.includes(file.type)) {
-                    showToast('Format file tidak didukung! Gunakan JPG, PNG, atau PDF.', 'error');
-                    this.value = '';
-                    return;
-                }
-                
-                // Update file name
-                fileNameDiv.innerHTML = `
-                    <small class="text-success">
-                        <i class="fas fa-check-circle me-1"></i>
-                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
-                    </small>
-                `;
-                
-                // Show preview
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImage.src = e.target.result;
-                        previewImage.classList.remove('d-none');
-                        pdfPreview.classList.add('d-none');
-                        previewContainer.classList.remove('d-none');
-                    };
-                    reader.readAsDataURL(file);
-                } else if (file.type === 'application/pdf') {
-                    pdfFileName.textContent = file.name;
-                    previewImage.classList.add('d-none');
-                    pdfPreview.classList.remove('d-none');
-                    previewContainer.classList.remove('d-none');
-                }
-            } else {
-                fileNameDiv.innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
-                previewContainer.classList.add('d-none');
-            }
-        });
-        
-        // Update processBooking function to include payment data
-        function processBooking() {
-    const nama = document.getElementById('nama').value.trim();
-    const wa = document.getElementById('wa').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const tanggal = document.getElementById('tanggal').value;
-    const lapangan = document.getElementById('lapangan').value;
-    const durasi = document.getElementById('durasi').value;
-    const pesan = document.getElementById('pesan').value.trim();
     
-    // Get payment data
-    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
-    const paymentProofInput = document.getElementById('paymentProof');
-    
-    if (!nama || !wa || !email || !tanggal || !lapangan || !durasi || !currentState.selectedSlot) {
-        showToast('Harap lengkapi semua data!', 'error');
-        return;
-    }
-    
-    if (!validateEmail()) {
-        showToast('Email harus @gmail.com', 'error');
-        return;
-    }
-    
-    // Check if payment method is selected
-    if (!paymentMethodElement) {
-        showToast('Harap pilih metode pembayaran!', 'error');
-        return;
-    }
-    
-    // Check if payment proof is uploaded
-    if (!paymentProofInput.files[0]) {
-        showToast('Harap upload bukti transfer!', 'error');
-        return;
-    }
-    
-    const paymentMethod = paymentMethodElement.value;
-    
-    // Read payment proof as base64
-    const file = paymentProofInput.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        // Simpan semua data termasuk pembayaran
-        const bookingData = {
-            id: generateBookingId(),
-            nama,
-            wa,
-            email,
-            tanggal,
-            lapangan,
-            durasi,
-            waktu: currentState.selectedSlot,
-            pesan,
-            paymentMethod: getPaymentMethodText(paymentMethod), // Simpan teks metode pembayaran
-            paymentMethodCode: paymentMethod, // Simpan kode metode pembayaran
-            paymentProof: e.target.result, // Base64 string
-            fileName: file.name, // Nama file
-            fileSize: file.size, // Ukuran file
-            total: parseInt(document.getElementById('total-harga').textContent.replace(/\D/g, '')),
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        };
-        
-        currentState.bookingData = bookingData;
-        
-        // Update invoice dengan data pembayaran
-        updateInvoice(bookingData);
-        
-        showPage('invoice');
-        showToast('Booking berhasil diproses!', 'success');
-    };
-    
-    reader.readAsDataURL(file);
+    // Sembunyikan loading setelah 1 detik (fallback)
+    setTimeout(() => hideLoading(), 1000);
 }
 
-        // Tambahkan fungsi validasi file
-function validateFile(file) {
-    // Validasi ukuran file (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-        showToast('File terlalu besar! Maksimal 5MB.', 'error');
-        return false;
-    }
-    
-    // Validasi tipe file
-    const allowedTypes = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'image/gif',
-        'application/pdf'
-    ];
-    
-    if (!allowedTypes.includes(file.type)) {
-        showToast('Format file tidak didukung! Gunakan JPG, PNG, atau PDF.', 'error');
-        return false;
-    }
-    
-    return true;
+function printBookingDetail() {
+    window.print();
 }
-
-// Update event listener untuk file upload
-document.getElementById('paymentProof').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const fileNameDiv = document.getElementById('fileName');
-    const previewContainer = document.getElementById('previewContainer');
-    const previewImage = document.getElementById('previewImage');
-    const pdfPreview = document.getElementById('pdfPreview');
-    const pdfFileName = document.getElementById('pdfFileName');
-    
-    if (file) {
-        // Validasi file
-        if (!validateFile(file)) {
-            this.value = '';
-            return;
-        }
-        
-        // Update file info
-        const fileSize = (file.size / 1024).toFixed(1);
-        fileNameDiv.innerHTML = `
-            <small class="text-success">
-                <i class="fas fa-check-circle me-1"></i>
-                ${file.name} (${fileSize} KB)
-            </small>
-        `;
-        
-        // Show preview berdasarkan tipe file
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                previewImage.classList.remove('d-none');
-                pdfPreview.classList.add('d-none');
-                previewContainer.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        } else if (file.type === 'application/pdf') {
-            pdfFileName.textContent = file.name;
-            previewImage.classList.add('d-none');
-            pdfPreview.classList.remove('d-none');
-            previewContainer.classList.remove('d-none');
-        }
-    } else {
-        fileNameDiv.innerHTML = '<small class="text-muted">Belum ada file dipilih</small>';
-        previewContainer.classList.add('d-none');
-    }
-});
-        
-        function getPaymentMethodText(method) {
-            const methods = {
-                'bank_transfer': 'Transfer Bank',
-                'e_wallet': 'E-Wallet',
-                'virtual_account': 'Virtual Account'
-            };
-            return methods[method] || 'Unknown';
-        }
-
-        let currentAdminData = null;
 
 function showAdminLogin() {
     const modal = new bootstrap.Modal(document.getElementById('adminLoginModal'));
@@ -4476,9 +4211,8 @@ function loginAdmin() {
     }
 }
 
-function logoutAdmin() {
-    showPage('landing');
-    showToast('Anda telah logout', 'info');
+function checkAdminAuth() {
+    return true; // Temporary, bisa ditambahkan auth logic
 }
 
 function loadAdminData() {
@@ -4487,12 +4221,17 @@ function loadAdminData() {
     const pending = bookings.filter(b => b.status === 'pending');
     const confirmed = bookings.filter(b => b.status === 'confirmed');
     
-    document.getElementById('pendingCount').textContent = pending.length;
-    document.getElementById('confirmedCount').textContent = confirmed.length;
-    document.getElementById('totalBookingsCount').textContent = bookings.length;
+    const pendingCountEl = document.getElementById('pendingCount');
+    const confirmedCountEl = document.getElementById('confirmedCount');
+    const totalBookingsCountEl = document.getElementById('totalBookingsCount');
+    const totalRevenueEl = document.getElementById('totalRevenue');
+    
+    if (pendingCountEl) pendingCountEl.textContent = pending.length;
+    if (confirmedCountEl) confirmedCountEl.textContent = confirmed.length;
+    if (totalBookingsCountEl) totalBookingsCountEl.textContent = bookings.length;
     
     const totalRevenue = [...confirmed].reduce((sum, b) => sum + (b.total || 0), 0);
-    document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+    if (totalRevenueEl) totalRevenueEl.textContent = formatCurrency(totalRevenue);
     
     renderPendingTable(pending);
     renderAllTable(bookings);
@@ -4500,6 +4239,8 @@ function loadAdminData() {
 
 function renderPendingTable(bookings) {
     const tableBody = document.getElementById('adminPendingTable');
+    if (!tableBody) return;
+    
     tableBody.innerHTML = '';
     
     if (bookings.length === 0) {
@@ -4541,7 +4282,56 @@ function renderPendingTable(bookings) {
     });
 }
 
-// Fungsi untuk menampilkan bukti pembayaran
+function renderAllTable(bookings) {
+    const tableBody = document.getElementById('adminAllTable');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    const sorted = bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    if (sorted.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="background: rgba(10, 36, 99, 0.8);">
+                    <div class="text-center py-5">
+                        <i class="fas fa-database fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
+                        <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem;">
+                            Tidak ada data booking
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    sorted.forEach(booking => {
+        const status = booking.status === 'pending' ? 
+            '<span class="badge badge-warning">Menunggu</span>' :
+            booking.status === 'confirmed' ?
+            '<span class="badge badge-success">Dikonfirmasi</span>' :
+            '<span class="badge badge-info">' + getStatusText(booking.status) + '</span>';
+        
+        const row = `
+            <tr>
+                <td><strong style="color: var(--accent);">${booking.id}</strong></td>
+                <td>${booking.nama}</td>
+                <td>${getCourtName(booking.lapangan)}</td>
+                <td>${booking.tanggal} ${booking.waktu}</td>
+                <td style="color: var(--success); font-weight: 600;">${formatCurrency(booking.total)}</td>
+                <td>${status}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-light" onclick="viewAdminBookingDetail('${booking.id}')" style="padding: 5px 10px;">
+                        <i class="fas fa-eye me-1"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
+
 function showPaymentProof(bookingId) {
     const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     const booking = bookings.find(b => b.id === bookingId);
@@ -4558,7 +4348,6 @@ function showPaymentProof(bookingId) {
     
     const modalContent = document.getElementById('proofModalContent');
     
-    // Reset modal content
     modalContent.innerHTML = `
         <div class="text-center">
             <div class="mb-4">
@@ -4614,61 +4403,10 @@ function showPaymentProof(bookingId) {
         </div>
     `;
     
-    // Tampilkan modal
     const proofModal = new bootstrap.Modal(document.getElementById('proofModal'));
     proofModal.show();
 }
 
-function renderAllTable(bookings) {
-    const tableBody = document.getElementById('adminAllTable');
-    tableBody.innerHTML = '';
-    
-    const sorted = bookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    if (sorted.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="7" style="background: rgba(10, 36, 99, 0.8);">
-                    <div class="text-center py-5">
-                        <i class="fas fa-database fa-3x mb-3" style="color: rgba(255, 255, 255, 0.3);"></i>
-                        <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem;">
-                            Tidak ada data booking
-                        </p>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    sorted.forEach(booking => {
-        const status = booking.status === 'pending' ? 
-            '<span class="badge badge-warning">Menunggu</span>' :
-            booking.status === 'confirmed' ?
-            '<span class="badge badge-success">Dikonfirmasi</span>' :
-            '<span class="badge badge-info">' + getStatusText(booking.status) + '</span>';
-        
-        const row = `
-            <tr>
-                <td><strong style="color: var(--accent);">${booking.id}</strong></td>
-                <td>${booking.nama}</td>
-                <td>${getCourtName(booking.lapangan)}</td>
-                <td>${booking.tanggal} ${booking.waktu}</td>
-                <td style="color: var(--success); font-weight: 600;">${formatCurrency(booking.total)}</td>
-                <td>${status}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-outline-light" onclick="viewAdminBookingDetail('${booking.id}')" style="padding: 5px 10px;">
-                        <i class="fas fa-eye me-1"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-        tableBody.innerHTML += row;
-    });
-}
-
-// Fungsi untuk konfirmasi pembayaran dari admin - LANGSUNG KONFIRMASI
-// Fungsi untuk konfirmasi pembayaran dari admin
 function confirmAdminPayment(bookingId) {
     const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     const booking = bookings.find(b => b.id === bookingId);
@@ -4678,11 +4416,9 @@ function confirmAdminPayment(bookingId) {
         return;
     }
     
-    // Simpan booking yang akan dikonfirmasi
     bookingToConfirm = bookingId;
-    bookingDataGlobal = booking; // Simpan data booking
+    bookingDataGlobal = booking;
     
-    // Tampilkan modal konfirmasi yang lebih informatif
     const confirmMessage = document.getElementById('simpleConfirmMessage');
     confirmMessage.innerHTML = `
         <div class="text-center">
@@ -4697,7 +4433,6 @@ function confirmAdminPayment(bookingId) {
         </div>
     `;
     
-    // Set event handler untuk tombol konfirmasi
     const confirmBtn = document.getElementById('simpleConfirmBtn');
     confirmBtn.onclick = function() {
         if (bookingToConfirm) {
@@ -4709,7 +4444,6 @@ function confirmAdminPayment(bookingId) {
     modal.show();
 }
 
-// Fungsi baru untuk memproses konfirmasi
 function processAdminConfirmation() {
     if (!bookingToConfirm) return;
     
@@ -4721,33 +4455,66 @@ function processAdminConfirmation() {
         return;
     }
     
-    // Update status booking
     bookings[bookingIndex].status = 'confirmed';
     bookings[bookingIndex].confirmedAt = new Date().toISOString();
     bookings[bookingIndex].confirmedBy = 'Admin';
     
-    // Simpan kembali ke localStorage
     localStorage.setItem('bookings', JSON.stringify(bookings));
     
-    // Tutup modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('simpleConfirmModal'));
     modal.hide();
     
-    // Kirim notifikasi WhatsApp (opsional)
     sendConfirmationNotification(bookings[bookingIndex]);
     
-    // Refresh data admin
     loadAdminData();
-    
-    // Tampilkan notifikasi sukses
     showToast(`✅ Booking ${bookingToConfirm} berhasil dikonfirmasi!`, 'success');
     
-    // Reset
     bookingToConfirm = null;
     bookingDataGlobal = {};
 }
 
-// Fungsi untuk kirim notifikasi WhatsApp
+function updateInvoice(bookingData) {
+    console.log('📝 Updating invoice with:', bookingData);
+    
+    // Update semua elemen invoice
+    const elements = {
+        'invoice-number': bookingData.id,
+        'invoice-nama': bookingData.nama,
+        'invoice-lapangan': getCourtName(bookingData.lapangan),
+        'invoice-waktu': `${bookingData.tanggal} ${bookingData.waktu}`,
+        'invoice-durasi': `${bookingData.durasi} menit`,
+        'invoice-total': formatCurrency(bookingData.total),
+        'booking-code': bookingData.id
+    };
+    
+    // Update setiap elemen
+    for (const [id, value] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+    
+    // Update tanggal invoice
+    const invoiceDate = document.getElementById('invoice-date');
+    if (invoiceDate) {
+        invoiceDate.textContent = formatDate(new Date());
+    }
+    
+    // Terapkan terjemahan
+    setTimeout(() => applyTranslations(), 100);
+}
+
+function formatDate(date) {
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    return date.toLocaleDateString(currentLang === 'id' ? 'id-ID' : 'en-US', options);
+}ss
+
 function sendConfirmationNotification(booking) {
     const message = `Halo ${booking.nama}!%0A%0A` +
                    `Booking Anda telah *DIKONFIRMASI* dengan detail:%0A%0A` +
@@ -4759,10 +4526,104 @@ function sendConfirmationNotification(booking) {
                    `*STATUS*: ✅ TERKONFIRMASI%0A%0A` +
                    `Silakan datang tepat waktu. Terima kasih!`;
     
-    // Buka WhatsApp (bisa di-enable jika perlu)
+    // Buka WhatsApp jika diperlukan
     // window.open(`https://wa.me/${booking.wa}?text=${message}`, '_blank');
 }
 
-        </script>
-    </body>
-    </html>
+function logoutAdmin() {
+    showPage('landing');
+    showToast('Anda telah logout', 'info');
+}
+
+function printInvoice() {
+    window.print();
+}
+
+function viewAdminBookingDetail(bookingId) {
+    viewBookingHistoryDetail(bookingId); // Bisa menggunakan fungsi yang sama
+}
+
+// Fungsi untuk menampilkan loading
+function showLoading(message = 'Memuat...') {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+        const loadingText = loadingOverlay.querySelector('.loading-text');
+        if (loadingText && message) {
+            loadingText.textContent = message;
+        }
+    }
+}
+
+// Fungsi untuk menyembunyikan loading
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('hidden');
+    }
+}
+
+// Perbarui fungsi initApp untuk menggunakan loading
+function initApp() {
+    console.log('=== COURTIFY INITIALIZATION STARTED ===');
+    showLoading('Memuat Courtify...');
+    
+    try {
+        // 1. Load state terlebih dahulu
+        loadState();
+        
+        // 2. Setup form date
+        const tanggalInput = document.getElementById('tanggal');
+        if (tanggalInput) {
+            const today = new Date().toISOString().split('T')[0];
+            tanggalInput.min = today;
+            if (!tanggalInput.value) {
+                tanggalInput.value = today;
+            }
+        }
+        
+        // 3. Setup event listeners
+        setupEventListeners();
+        
+        // 4. Update statistik awal
+        updateStats();
+        
+        // 5. Tampilkan halaman yang sesuai
+        setTimeout(() => {
+            showPage(currentState.currentPage);
+            console.log('✅ Current page:', currentState.currentPage);
+            
+            // Sembunyikan loading
+            setTimeout(() => {
+                hideLoading();
+            }, 500);
+        }, 100);
+        
+        // 6. Terapkan terjemahan
+        setTimeout(() => {
+            applyTranslations();
+        }, 200);
+        
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showPage('landing');
+        hideLoading();
+    }
+    
+    console.log('=== COURTIFY INITIALIZATION COMPLETE ===');
+}
+
+// Di dalam setupEventListeners() tambahkan:
+document.getElementById('adminPassword')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        loginAdmin();
+    }
+});
+
+document.getElementById('proceedPaymentBtn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('🔘 Tombol Lanjutkan Pembayaran diklik');
+    processBooking();
+});
+
+</script>
